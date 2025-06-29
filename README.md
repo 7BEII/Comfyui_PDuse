@@ -25,7 +25,7 @@ git clone
 #### 1. **text处理**:
 
 ##### PD:Image Blend Text
-![[img/PD_ImageMergerWithText.png]]
+![PD_ImageMergerWithText](img/PD_ImageMergerWithText.png)
 > 字体文件可以放入文件夹fonts 。
 > 两张图片合在一起，然后两个文字分别加上去，制作对比图使用。
 
@@ -36,7 +36,9 @@ git clone
 - ​​padding_down：文字​**​下方​**​的留白高度  10- 1000 ,可以往下扩多一些方便排版
 - font_file​  选择字体样式, 需将.ttf/.otf文件放入插件目录的fonts文件夹
 ##### PD_Text Overlay Node
-> PD_Text Overlay Node 主要作用是给图片添加文字，并且指定位置贴上去。![[PD_Text Overlay Node.png]]
+> PD_Text Overlay Node 主要作用是给图片添加文字，并且指定位置贴上去。
+
+![PD_Text Overlay Node](img/PD_Text%20Overlay%20Node.png)
 - image：要处理的输入图片
 - text：需要叠加的文字内容 
 - font_size：字体大小 
@@ -46,11 +48,12 @@ git clone
 - letter_gap：字符间距（可为负数，负数使字母靠近） 
 - font_name：使用的字体文件名（从fonts目录中选择）
 ##### PD:imageconcante_V1
-![[PDimageconcante_V1.png]]
+![PDimageconcante_V1](img/PDimageconcante_V1.png)
 - 两张图合并一起。
 #### **image处理**
 
 #### **PDIMAGE:Load_Images 节点说明**
+![PD_Load_Images](img/PD_Load_Images.png)
 
 **功能说明：**
 批量图片加载节点，用于从指定目录中加载多张图片，支持多种加载选项和缓存控制。
@@ -90,8 +93,10 @@ git clone
 - 输出为image，mask 和paths.
 
 #### **PD:imageconcante_V1 节点说明**
+![PDimageconcante_V1](img/PDimageconcante_V1.png)
 
 用于将两张图片按指定方向拼接，支持多种尺寸对齐和裁切方式。
+image2 不输入则直接输出img1 的结果，方便适应不同任务情况。
 
 **参数说明：**
 - **image1**：输入图片1（必填）
@@ -112,9 +117,9 @@ git clone
 - 需要严格对齐image1尺寸时，选择 `crop by image1` 并设置裁切方式。
 
 ### **PD:Image Blend V1 节点说明**
-![[PD_Image Blend V1.png]]
+![PDImage_Blend V1](img/PDImage_Blend%20V1%20.png)
+
 用于将两张图片进行混合，支持多种混合模式、透明度控制和位置调整。
-![[PDImage_Blend V1 .png]]
 **参数说明：**
 - **background_image**：背景图像（必填）
 - **layer_image**：图层图像（必填）
