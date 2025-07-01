@@ -2,8 +2,6 @@
 简单测试节点 - 用于排除导入问题
 """
 
-import torch
-
 class PD_SimpleTest:
     """简单的测试节点"""
     

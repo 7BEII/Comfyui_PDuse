@@ -1,8 +1,15 @@
 [project]
-name = "comfyui_pduse"
-description = "An extension for ComfyUI that allows hot reloading. Once installed, you can preview changes in real-time while developing custom nodes or installing plugins without restarting ComfyUI."
+name = "comfyui-PDuse"
+description = "A comprehensive collection of custom nodes for ComfyUI, focusing on image processing, text handling, and workflow optimization. Includes nodes for image blending, text overlay, batch processing, image resizing, and advanced save operations."
 version = "1.0.1"
-dependencies = ["xlrd"]
+license = { text = "MIT" }
+dependencies = [
+    "xlrd",
+    "numpy", 
+    "Pillow",
+    "torch",
+    "torchvision"
+]
 
 [project.urls]
 Repository = "https://github.com/7BEII/Comfyui_PDuse"
@@ -10,5 +17,5 @@ Repository = "https://github.com/7BEII/Comfyui_PDuse"
 
 [tool.comfy]
 PublisherId = "7BEII" 
-DisplayName = "Comfyui_PDuse"
-Icon = ""
+DisplayName = "ComfyUI PDuse"
+Icon = "https://raw.githubusercontent.com/7BEII/Comfyui_PDuse/main/img/image.png"

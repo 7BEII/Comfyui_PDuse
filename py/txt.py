@@ -85,10 +85,6 @@ class PD_RemoveColorWords:
             return (f"处理出错：{e}",)
 
 
-import torch
-from comfy.sd import CLIP
-from nodes import MAX_RESOLUTION
-
 class Empty_Line:
     @classmethod
     def INPUT_TYPES(cls):
@@ -108,117 +104,14 @@ class Empty_Line:
         cleaned_text = re.sub(r'^[\r\n]+', '', text)
         return (cleaned_text,)
     
-    
-from comfy.utils import ProgressBar
-
-import os
-import re
-import time
-from comfy.utils import ProgressBar
-
-class PDstring_Save:
-    def __init__(self):
-        pass
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "text": ("STRING", {"forceInput": True}),
-                "path": ("STRING", {"default": './output/[time(%Y-%m-%d)]', "multiline": False}),
-                "filename": ("STRING", {"default": "text"}),
-                "filename_delimiter": ("STRING", {"default": "_"}),
-                "filename_number_padding": ("INT", {"default": 4, "min": 0, "max": 9, "step": 1}),
-                "file_extension": (["txt", "json", "csv", "log", "md"], {"default": "txt"}),
-            },
-            "hidden": {
-                "prompt": "PROMPT", 
-                "extra_pnginfo": "EXTRA_PNGINFO",
-                "unique_id": "UNIQUE_ID",
-            },
-        }
-
-    RETURN_TYPES = ()
-    RETURN_NAMES = ()
-    FUNCTION = "save_text_file"
-    CATEGORY = "PowerDiffusion/IO"
-    OUTPUT_NODE = True
-
-    def save_text_file(self, text, path, filename, filename_delimiter, filename_number_padding, file_extension, prompt=None, extra_pnginfo=None, unique_id=None):
-        # 处理文件扩展名
-        if not file_extension.startswith('.'):
-            file_extension = f".{file_extension}"
-        
-        # 获取ComfyUI根目录
-        comfy_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        
-        # 处理路径中的时间变量
-        if '[time(' in path:
-            try:
-                time_format = path.split('[time(')[1].split(')]')[0]
-                formatted_time = time.strftime(time_format)
-                path = path.replace(f'[time({time_format})]', formatted_time)
-            except:
-                path = path.replace('[time(%Y-%m-%d)]', time.strftime("%Y-%m-%d"))
-        
-        # 处理路径
-        if not os.path.isabs(path):
-            path = os.path.join(comfy_dir, path)
-        
-        path = os.path.normpath(path)
-        
-        # 创建目录（如果不存在）
-        os.makedirs(path, exist_ok=True)
-
-        # 生成文件名
-        if filename_number_padding == 0:
-            full_filename = f"{filename}{file_extension}"
-        else:
-            pattern = re.compile(
-                f"{re.escape(filename)}{re.escape(filename_delimiter)}(\\d{{{filename_number_padding}}}){re.escape(file_extension)}"
-            )
-            existing_files = [f for f in os.listdir(path) if pattern.match(f)] if os.path.exists(path) else []
-            
-            next_num = 1
-            if existing_files:
-                numbers = [int(pattern.match(f).group(1)) for f in existing_files]
-                next_num = max(numbers) + 1 if numbers else 1
-            
-            full_filename = f"{filename}{filename_delimiter}{next_num:0{filename_number_padding}}{file_extension}"
-            
-            # 处理可能的冲突
-            while os.path.exists(os.path.join(path, full_filename)):
-                next_num += 1
-                full_filename = f"{filename}{filename_delimiter}{next_num:0{filename_number_padding}}{file_extension}"
-
-        # 写入文件
-        file_path = os.path.join(path, full_filename)
-        try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(text)
-            print(f"[PDstring_Save] 文本已保存到: {file_path}")
-        except Exception as e:
-            error_path = os.path.join(comfy_dir, "output", "txt", f"error_{filename}{file_extension}")
-            with open(error_path, 'w', encoding='utf-8') as f:
-                f.write(text)
-            print(f"[PDstring_Save] 无法保存到 {file_path}, 错误: {e}")
-            print(f"[PDstring_Save] 文本已保存到备用位置: {error_path}")
-
-        return ()
-
-    @staticmethod
-    def IS_CHANGED(*args, **kwargs):
-        return float("NaN")
 
 # 节点映射
 NODE_CLASS_MAPPINGS = {
     "PD_RemoveColorWords": PD_RemoveColorWords,
     "Empty_Line": Empty_Line,
-    "PDstring_Save": PDstring_Save,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PD_RemoveColorWords": "PD_批量去除/添加单词",
+    "PD_RemoveColorWords": "PDstring:removecolorwords",
     "Empty_Line": "PDstring:del_EmptyLine",
-    "PDstring_Save": "PDstring:txtSave",
 }

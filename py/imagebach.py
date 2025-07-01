@@ -1,6 +1,5 @@
 import torch
-from comfyui import Node
-from comfyui.utils import common_upscale  # 确保 common_upscale 已正确导入
+from comfy.utils import common_upscale  # 确保 common_upscale 已正确导入
 
 class Imagecombine2:
     @classmethod

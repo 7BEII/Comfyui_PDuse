@@ -182,7 +182,6 @@ class PD_GetImageSize:
         # 返回宽高信息
         return (image_width, image_height, {"ui": {"text": [size_info]}})
     
-from PIL import Image, ImageOps
 import folder_paths
 from typing import Tuple
 from math import floor

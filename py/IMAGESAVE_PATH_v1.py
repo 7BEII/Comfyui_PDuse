@@ -8,21 +8,9 @@ from PIL.PngImagePlugin import PngInfo
 import os
 import numpy as np
 import json
-import sys
 from comfy.cli_args import args
 import folder_paths
 from datetime import datetime
-
-# 获取当前文件所在目录
-current_dir = os.path.dirname(__file__)
-
-# 获取祖父级目录路径
-grandparent_dir = os.path.abspath(os.path.join(current_dir, '..', '..'))
-
-# 将祖父级目录添加到系统路径中
-sys.path.append(grandparent_dir)
-
-from comfy.cli_args import args
 
 class PD_imagesave_path:
     """
