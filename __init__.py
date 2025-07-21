@@ -55,7 +55,7 @@ else:
     print(f"警告: py目录不存在: {py_dir}")
 
 # Web界面目录
-WEB_DIRECTORY = "./js"
+WEB_DIRECTORY = "js"
 
 # 显示加载信息
 if NODE_CLASS_MAPPINGS:
@@ -71,4 +71,4 @@ else:
     print("⚠️  警告: 没有找到任何可用的节点")
 
 # 导出变量
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
+__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']

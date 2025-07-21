@@ -1,0 +1,638 @@
+{
+  "id": "37ca845b-4eff-4be7-9159-2d1b20767c1b",
+  "revision": 0,
+  "last_node_id": 172,
+  "last_link_id": 212,
+  "nodes": [
+    {
+      "id": 165,
+      "type": "PDStringConcate",
+      "pos": [
+        365.64349365234375,
+        -1655.784912109375
+      ],
+      "size": [
+        281.20660400390625,
+        78
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string1",
+          "type": "STRING",
+          "link": 198
+        },
+        {
+          "name": "string2",
+          "type": "STRING",
+          "link": 200
+        }
+      ],
+      "outputs": [
+        {
+          "name": "joined_string",
+          "type": "STRING",
+          "links": [
+            209
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDStringConcate"
+      },
+      "widgets_values": [
+        ","
+      ]
+    },
+    {
+      "id": 172,
+      "type": "PDTEXT_SAVE_PATH_V1",
+      "pos": [
+        377.97247314453125,
+        -1513.61279296875
+      ],
+      "size": [
+        270,
+        178
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 209
+        },
+        {
+          "name": "output_folder",
+          "type": "STRING",
+          "widget": {
+            "name": "output_folder"
+          },
+          "link": 212
+        },
+        {
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": 210
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PDTEXT_SAVE_PATH_V1"
+      },
+      "widgets_values": [
+        "text_output",
+        "text",
+        "_",
+        1,
+        false,
+        "txt"
+      ]
+    },
+    {
+      "id": 56,
+      "type": "Note",
+      "pos": [
+        983.9491577148438,
+        -1925.5679931640625
+      ],
+      "size": [
+        210,
+        88
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        ""
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 157,
+      "type": "PDIMAGE_LongerSize",
+      "pos": [
+        -410.8201599121094,
+        -1408.5128173828125
+      ],
+      "size": [
+        262.3843078613281,
+        82
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 188
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            194
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDIMAGE_LongerSize"
+      },
+      "widgets_values": [
+        1024,
+        "bicubic"
+      ]
+    },
+    {
+      "id": 156,
+      "type": "Note",
+      "pos": [
+        -117.04309844970703,
+        -1249.728759765625
+      ],
+      "size": [
+        405.1672058105469,
+        147.02146911621094
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "padding-代表后面有多少个0"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 169,
+      "type": "PDIMAGE_SAVE_PATH_V2",
+      "pos": [
+        671.9927978515625,
+        -1652.4306640625
+      ],
+      "size": [
+        272.6236267089844,
+        319.990234375
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 207
+        },
+        {
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": 204
+        },
+        {
+          "name": "output_dir",
+          "type": "STRING",
+          "widget": {
+            "name": "output_dir"
+          },
+          "link": 208
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PDIMAGE_SAVE_PATH_V2"
+      },
+      "widgets_values": [
+        "text",
+        "",
+        "_",
+        1,
+        false,
+        "jpg",
+        100,
+        true,
+        false,
+        true,
+        "false"
+      ]
+    },
+    {
+      "id": 158,
+      "type": "PDStringInput",
+      "pos": [
+        -755.7425537109375,
+        -1664.49560546875
+      ],
+      "size": [
+        312.0390319824219,
+        88
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            193
+          ]
+        }
+      ],
+      "title": "输入文件夹",
+      "properties": {
+        "Node name for S&R": "PDStringInput"
+      },
+      "widgets_values": [
+        "E:\\AIGC研究室\\work_匠韵工作文件\\油画\\印象莫奈_yinxiangmonai\\nput"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 159,
+      "type": "PDStringInput",
+      "pos": [
+        -744.8533935546875,
+        -1507.596435546875
+      ],
+      "size": [
+        312.0390319824219,
+        88
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            208,
+            212
+          ]
+        }
+      ],
+      "title": "输出文件夹",
+      "properties": {
+        "Node name for S&R": "PDStringInput"
+      },
+      "widgets_values": [
+        "E:\\AIGC研究室\\work_匠韵工作文件\\油画\\印象莫奈_yinxiangmonai\\output"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 167,
+      "type": "PDStringInput",
+      "pos": [
+        -749.5397338867188,
+        -1189.2042236328125
+      ],
+      "size": [
+        312.0390319824219,
+        88
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            204,
+            210
+          ]
+        }
+      ],
+      "title": "文件名称-file name",
+      "properties": {
+        "Node name for S&R": "PDStringInput"
+      },
+      "widgets_values": [
+        "monai_V1"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 161,
+      "type": "PDStringInput",
+      "pos": [
+        -744.7484130859375,
+        -1348.6783447265625
+      ],
+      "size": [
+        312.0390319824219,
+        88
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            198
+          ]
+        }
+      ],
+      "title": "触发词",
+      "properties": {
+        "Node name for S&R": "PDStringInput"
+      },
+      "widgets_values": [
+        "Monet"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 160,
+      "type": "BizyAirSiliconCloudVLMAPI",
+      "pos": [
+        -118.88238525390625,
+        -1640.96826171875
+      ],
+      "size": [
+        412.3753662109375,
+        336.0517578125
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 194
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            200
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BizyAirSiliconCloudVLMAPI"
+      },
+      "widgets_values": [
+        "SiliconFlow:Qwen/Qwen2.5-VL-72B-Instruct",
+        "You are an Ai prompt expert who can analyze images. Please look closely at the image and provide a detailed and accurate description as required. Please always describe the picture in English",
+        "帮我用一段AI提示词描述一下，这是一幅印象派画作，需要尽可能把风格，场景，角色的元素描述详细，性别头发发型，衣服特征，颜色，不超过128单词，用英文进行描述。\n始终加上这句话在最前面，可以根据每个画面不同而稍微调整：“create by Monet, Impressionist painting.,”",
+        512,
+        0.7100000000000002,
+        "auto"
+      ]
+    },
+    {
+      "id": 131,
+      "type": "Load_Images",
+      "pos": [
+        -415.5406188964844,
+        -1645.552734375
+      ],
+      "size": [
+        269.2117919921875,
+        170
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "directory",
+          "name": "directory",
+          "type": "STRING",
+          "widget": {
+            "name": "directory"
+          },
+          "link": 193
+        }
+      ],
+      "outputs": [
+        {
+          "label": "images",
+          "name": "images",
+          "shape": 6,
+          "type": "IMAGE",
+          "links": [
+            188,
+            207
+          ]
+        },
+        {
+          "label": "masks",
+          "name": "masks",
+          "shape": 6,
+          "type": "MASK",
+          "links": null
+        },
+        {
+          "label": "file_paths",
+          "name": "file_paths",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Load_Images"
+      },
+      "widgets_values": [
+        "",
+        2,
+        0,
+        false
+      ]
+    }
+  ],
+  "links": [
+    [
+      188,
+      131,
+      0,
+      157,
+      0,
+      "IMAGE"
+    ],
+    [
+      193,
+      158,
+      0,
+      131,
+      0,
+      "STRING"
+    ],
+    [
+      194,
+      157,
+      0,
+      160,
+      0,
+      "IMAGE"
+    ],
+    [
+      198,
+      161,
+      0,
+      165,
+      0,
+      "STRING"
+    ],
+    [
+      200,
+      160,
+      0,
+      165,
+      1,
+      "STRING"
+    ],
+    [
+      204,
+      167,
+      0,
+      169,
+      1,
+      "STRING"
+    ],
+    [
+      207,
+      131,
+      0,
+      169,
+      0,
+      "IMAGE"
+    ],
+    [
+      208,
+      159,
+      0,
+      169,
+      2,
+      "STRING"
+    ],
+    [
+      209,
+      165,
+      0,
+      172,
+      0,
+      "STRING"
+    ],
+    [
+      210,
+      167,
+      0,
+      172,
+      2,
+      "STRING"
+    ],
+    [
+      212,
+      159,
+      0,
+      172,
+      1,
+      "STRING"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 2,
+      "title": "批量反推工具_V9.1-简易版",
+      "bounding": [
+        -780.4033813476562,
+        -1969.457275390625,
+        1867.888916015625,
+        188.06044006347656
+      ],
+      "color": "#3f789e",
+      "font_size": 128,
+      "flags": {}
+    },
+    {
+      "id": 20,
+      "title": "反推",
+      "bounding": [
+        330.6794738769531,
+        -1751.1785888671875,
+        755.56494140625,
+        460.107177734375
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 25,
+      "title": "Group",
+      "bounding": [
+        -780,
+        -1750,
+        1094.8983154296875,
+        664.0245361328125
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6588450000000093,
+      "offset": [
+        1190.7703988871644,
+        2276.8010015194654
+      ]
+    },
+    "frontendVersion": "1.22.2",
+    "workspace_info": {
+      "id": "sK2sjSudlJx8P5SmTuVsU"
+    },
+    "ue_links": [],
+    "node_versions": {
+      "ComfyUI-Inspire-Pack": "18f02d98b18f0f0016475a3a95cb66f243a8c8cc",
+      "comfy-core": "0.3.14",
+      "ComfyUI-KJNodes": "28381262d197596eb2b4c9bcc361228a5dcef4cc",
+      "comfyui-various": "36454f91606bbff4fc36d90234981ca4a47e2695",
+      "comfyui-dream-project": "426a6e85e973ea5a194a1aaa01404a8ddb25a4e9",
+      "Comfyui_PDuse": "e14a917b8e0a51dfe5d2b35260b7b5b411aeff56",
+      "ComfyUI-Custom-Scripts": "d6657cc1f04539dbeea38d7bf6d73bc025004fa4"
+    }
+  },
+  "version": 0.4
+}

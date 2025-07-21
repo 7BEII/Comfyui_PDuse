@@ -501,12 +501,71 @@ class PDIMAGE_LongerSize:
         return (image,)
 
 
+class PD_GetImageRatio:
+    """
+    获取图像比例节点
+    输入单张图片，计算并输出图像的宽高比例，格式为字符串（如"4:3"、"16:9"等）
+    """
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("ratio",)
+    FUNCTION = "get_image_ratio"
+    CATEGORY = "PD_Image/Process"
+    
+    def get_greatest_common_divisor(self, a, b):
+        """
+        计算最大公约数（欧几里得算法）
+        """
+        while b:
+            a, b = b, a % b
+        return a
+    
+    def simplify_ratio(self, width, height):
+        """
+        简化比例到最简形式
+        """
+        gcd = self.get_greatest_common_divisor(width, height)
+        simplified_width = width // gcd
+        simplified_height = height // gcd
+        return simplified_width, simplified_height
+    
+    def get_image_ratio(self, image):
+        """
+        获取图像比例
+        """
+        # 确保输入张量格式为 (B, H, W, C)
+        if len(image.shape) != 4:
+            raise ValueError(f"输入图像张量格式错误，期望 (B, H, W, C)，实际 {image.shape}")
+        
+        # 获取图像尺寸 (取第一张图片的尺寸)
+        batch_size, height, width, channels = image.shape
+        
+        # 简化比例
+        simplified_width, simplified_height = self.simplify_ratio(width, height)
+        
+        # 格式化为字符串
+        ratio_string = f"{simplified_width}:{simplified_height}"
+        
+        print(f"图像尺寸: {width}x{height}, 简化比例: {ratio_string}")
+        
+        return (ratio_string,)
+
+
     
 # 在 ComfyUI 中的节点映射配置
 NODE_CLASS_MAPPINGS = {
     "PD_Image_Crop_Location": PD_Image_Crop_Location,
     "PD_Image_centerCrop": PD_Image_centerCrop,
     "PD_GetImageSize": PD_GetImageSize, 
+    "PD_GetImageRatio": PD_GetImageRatio,
     "PDIMAGE_Rename": BatchImageRename,
     "Load_Images": Load_Images,
     "PDIMAGE_LongerSize": PDIMAGE_LongerSize
@@ -518,6 +577,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "PD_Image_Crop_Location": "PD:Image Crop Location",
     "PD_Image_centerCrop": "PD:Image centerCrop",
     "PD_GetImageSize": "PD:GetImageSize", 
+    "PD_GetImageRatio": "PD:GetImageRatio",
     "PDIMAGE_Rename": "PDIMAGE:Rename",
     "Load_Images": "PDIMAGE:Load_Images",
     "PDIMAGE_LongerSize": "PDIMAGE:LongerSize",

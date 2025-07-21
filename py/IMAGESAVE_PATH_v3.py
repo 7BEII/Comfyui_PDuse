@@ -1,5 +1,5 @@
 """
-PD图像保存节点 V2
+PD图像保存节点 V3
 该模块提供了增强的自定义路径保存图像功能，支持多种格式和高级选项
 """
 
@@ -15,9 +15,9 @@ from datetime import datetime
 from comfy.cli_args import args
 import folder_paths
 
-class PDIMAGE_SAVE_PATH_V2:
+class PDIMAGE_SAVE_PATH_V3:
     """
-    PD图像保存路径节点 V2
+    PD图像保存路径节点 V3
     功能：将图像保存到指定的自定义路径，支持多种格式、自定义文件名和高级选项
     """
     
@@ -39,11 +39,11 @@ class PDIMAGE_SAVE_PATH_V2:
         return {
             "required": {
                 "images": ("IMAGE",),  # 输入图像数组
-                "filename": ("STRING", {"default": "text"}),  # 文件名前缀
+                "name": ("STRING", {"default": "T_"}),  # 文件名前缀，空则不加前缀
                 "output_dir": ("STRING", {"default": "", "multiline": False}),  # 自定义输出目录
-                "filename_delimiter": ("STRING", {"default": "_"}),  # 文件名分隔符
-                "number_padding": ("INT", {"default": 2, "min": 0, "max": 9, "step": 1}),  # 数字填充位数
-                "number_start": ("BOOLEAN", {"default": False}),  # 数字是否在开头
+                "number_start": ("BOOLEAN", {"default": True}),  # 数字是否在开头
+                "number_padding": ("INT", {"default": 1, "min": 1, "max": 9, "step": 1}),  # 数字填充位数
+                "filename_delimiter": ("STRING", {"default": "_"}),  # 文件名分隔符，空则不加分隔符
                 "extension": (["png", "jpg", "jpeg", "webp", "bmp", "tiff"], {"default": "jpg"}),  # 文件扩展名
                 "quality": ("INT", {"default": 100, "min": 1, "max": 100}),  # 图像质量
                 "optimize_image": ("BOOLEAN", {"default": True}),  # 是否优化图像
@@ -62,20 +62,19 @@ class PDIMAGE_SAVE_PATH_V2:
     OUTPUT_NODE = True  # 标识为输出节点
     CATEGORY = "PD/Image"  # 节点分类
 
-    def save_images(self, images, filename="text", output_dir="", 
-                   filename_delimiter="_", number_padding=2, number_start=False,
-                   extension="jpg", quality=100, optimize_image=True, lossless_webp=False,
+    def save_images(self, images, name="T_", output_dir="", 
+                   number_start=True, number_padding=1, filename_delimiter="_", extension="jpg", quality=100, optimize_image=True, lossless_webp=False,
                    embed_metadata=True, overwrite_mode="false", prompt=None, extra_pnginfo=None):
         """
         保存图像主方法
         
         参数：
         - images: 图像数组
-        - filename: 文件名前缀
+        - name: 文件名前缀，空则不加前缀，默认"T_"
         - output_dir: 自定义输出目录路径
-        - filename_delimiter: 文件名分隔符
-        - number_padding: 数字填充位数
-        - number_start: 数字是否在开头
+        - number_start: 数字是否在开头，默认True
+        - number_padding: 数字填充位数，默认1
+        - filename_delimiter: 文件名分隔符，空则不加分隔符，默认"_"
         - extension: 文件扩展名
         - quality: 图像质量
         - optimize_image: 是否优化图像
@@ -90,13 +89,14 @@ class PDIMAGE_SAVE_PATH_V2:
         """
         try:
             # 解析文件名前缀中的令牌
-            filename = self._parse_tokens(filename)
+            name = self._parse_tokens(name)
             
             # 判断是否有自定义保存路径
             if not output_dir or output_dir.strip() == "":
                 # 没有自定义路径时，使用默认路径，并创建以文件名和日期为标识的子文件夹
                 date_str = datetime.now().strftime("%Y-%m-%d")
-                output_dir = os.path.join(self.output_dir, f"{filename}_{date_str}")
+                folder_name = name if name.strip() else "images"
+                output_dir = os.path.join(self.output_dir, f"{folder_name}_{date_str}")
             else:
                 # 解析自定义路径中的令牌
                 output_dir = self._parse_tokens(output_dir)
@@ -108,8 +108,7 @@ class PDIMAGE_SAVE_PATH_V2:
             
             # 调用私有方法保存图像到自定义目录
             self._save_images_to_dir(
-                images, filename, output_dir, filename_delimiter,
-                number_padding, number_start, extension, quality,
+                images, name, output_dir, number_padding, number_start, filename_delimiter, extension, quality,
                 optimize_image, lossless_webp, embed_metadata, overwrite_mode,
                 prompt, extra_pnginfo
             )
@@ -120,7 +119,7 @@ class PDIMAGE_SAVE_PATH_V2:
         except Exception as e:
             print(f"保存图像时发生错误: {e}")
             return {}
-    
+
     def _parse_tokens(self, text: str) -> str:
         """
         解析文本中的令牌
@@ -152,17 +151,17 @@ class PDIMAGE_SAVE_PATH_V2:
             text = text.replace(token, value)
         
         return text
-    
-    def _generate_filename(self, prefix: str, delimiter: str, number_padding: int, 
-                          number_start: bool, extension: str, output_dir: str) -> str:
+
+    def _generate_filename(self, name: str, number_padding: int, 
+                          number_start: bool, filename_delimiter: str, extension: str, output_dir: str) -> str:
         """
         生成唯一的文件名
         
         Args:
-            prefix (str): 文件名前缀
-            delimiter (str): 分隔符
+            name (str): 文件名前缀，空则不加前缀
             number_padding (int): 数字填充位数
             number_start (bool): 数字是否在开头
+            filename_delimiter (str): 文件名分隔符，空则不加分隔符
             extension (str): 文件扩展名
             output_dir (str): 输出目录
             
@@ -174,10 +173,22 @@ class PDIMAGE_SAVE_PATH_V2:
             extension = '.' + extension
         
         # 查找现有计数器值
-        if number_start:
-            pattern = f"(\\d+){re.escape(delimiter)}{re.escape(prefix)}"
-        else:
-            pattern = f"{re.escape(prefix)}{re.escape(delimiter)}(\\d+)"
+        if name.strip():  # 有前缀的情况
+            if number_start:
+                # 数字在开头: 1_T_.jpg 或 1T_.jpg（无分隔符）
+                if filename_delimiter:
+                    pattern = f"(\\d+){re.escape(filename_delimiter)}{re.escape(name)}"
+                else:
+                    pattern = f"(\\d+){re.escape(name)}"
+            else:
+                # 数字在末尾: T_1.jpg 或 T1.jpg（无分隔符）
+                if filename_delimiter:
+                    pattern = f"{re.escape(name)}{re.escape(filename_delimiter)}(\\d+)"
+                else:
+                    pattern = f"{re.escape(name)}(\\d+)"
+        else:  # 无前缀的情况
+            # 只有数字: 1.jpg
+            pattern = f"(\\d+)"
         
         existing_counters = []
         try:
@@ -187,7 +198,9 @@ class PDIMAGE_SAVE_PATH_V2:
                 if file_ext != extension.lower():
                     continue
                 
-                match = re.match(pattern, filename)
+                # 移除扩展名再匹配
+                name_without_ext = os.path.splitext(filename)[0]
+                match = re.match(pattern + "$", name_without_ext)
                 if match:
                     existing_counters.append(int(match.group(1)))
         except Exception as e:
@@ -200,23 +213,46 @@ class PDIMAGE_SAVE_PATH_V2:
             counter = 1
         
         # 生成文件名
-        if number_start:
-            filename = f"{counter:0{number_padding}}{delimiter}{prefix}{extension}"
-        else:
-            filename = f"{prefix}{delimiter}{counter:0{number_padding}}{extension}"
+        if name.strip():  # 有前缀的情况
+            if number_start:
+                # 数字在开头: 1_T_.jpg 或 1T_.jpg（无分隔符）
+                if filename_delimiter:
+                    filename = f"{counter:0{number_padding}}{filename_delimiter}{name}{extension}"
+                else:
+                    filename = f"{counter:0{number_padding}}{name}{extension}"
+            else:
+                # 数字在末尾: T_1.jpg 或 T1.jpg（无分隔符）
+                if filename_delimiter:
+                    filename = f"{name}{filename_delimiter}{counter:0{number_padding}}{extension}"
+                else:
+                    filename = f"{name}{counter:0{number_padding}}{extension}"
+        else:  # 无前缀的情况
+            # 只有数字: 1.jpg
+            filename = f"{counter:0{number_padding}}{extension}"
         
         # 确保文件名唯一
         while os.path.exists(os.path.join(output_dir, filename)):
             counter += 1
-            if number_start:
-                filename = f"{counter:0{number_padding}}{delimiter}{prefix}{extension}"
-            else:
-                filename = f"{prefix}{delimiter}{counter:0{number_padding}}{extension}"
+            if name.strip():  # 有前缀的情况
+                if number_start:
+                    # 数字在开头: 1_T_.jpg 或 1T_.jpg（无分隔符）
+                    if filename_delimiter:
+                        filename = f"{counter:0{number_padding}}{filename_delimiter}{name}{extension}"
+                    else:
+                        filename = f"{counter:0{number_padding}}{name}{extension}"
+                else:
+                    # 数字在末尾: T_1.jpg 或 T1.jpg（无分隔符）
+                    if filename_delimiter:
+                        filename = f"{name}{filename_delimiter}{counter:0{number_padding}}{extension}"
+                    else:
+                        filename = f"{name}{counter:0{number_padding}}{extension}"
+            else:  # 无前缀的情况
+                # 只有数字: 1.jpg
+                filename = f"{counter:0{number_padding}}{extension}"
         
         return filename
-    
-    def _save_images_to_dir(self, images, filename, output_dir, filename_delimiter,
-                           number_padding, number_start, extension, quality,
+
+    def _save_images_to_dir(self, images, name, output_dir, number_padding, number_start, filename_delimiter, extension, quality,
                            optimize_image, lossless_webp, embed_metadata, overwrite_mode,
                            prompt, extra_pnginfo):
         """
@@ -224,7 +260,7 @@ class PDIMAGE_SAVE_PATH_V2:
         
         参数：
         - images: 图像数组
-        - filename: 文件名前缀
+        - name: 文件名前缀，空则不加前缀
         - output_dir: 输出目录路径
         - 其他参数: 各种保存选项
         
@@ -253,15 +289,19 @@ class PDIMAGE_SAVE_PATH_V2:
                 
                 # 生成文件名
                 if overwrite_mode == "prefix_as_filename":
-                    file_name = f"{filename}.{extension}"
+                    file_name = f"{name}.{extension}"
                 else:
-                    # 为批次中的每个图像添加批次号
-                    batch_prefix = f"{filename}_{batch_number+1:03d}" if len(images) > 1 else filename
+                    # 为批次中的每个图像添加批次号（如果有多个图像）
+                    if len(images) > 1:
+                        batch_name = f"{name}_{batch_number+1:03d}" if name.strip() else f"batch_{batch_number+1:03d}"
+                    else:
+                        batch_name = name
+                    
                     file_name = self._generate_filename(
-                        prefix=batch_prefix,
-                        delimiter=filename_delimiter,
+                        name=batch_name,
                         number_padding=number_padding,
                         number_start=number_start,
+                        filename_delimiter=filename_delimiter,
                         extension=extension,
                         output_dir=output_dir
                     )
@@ -343,10 +383,10 @@ class PDIMAGE_SAVE_PATH_V2:
 
 # 节点类映射：将类名映射到实际的类
 NODE_CLASS_MAPPINGS = {
-    "PDIMAGE_SAVE_PATH_V2": PDIMAGE_SAVE_PATH_V2,
+    "PDIMAGE_SAVE_PATH_V3": PDIMAGE_SAVE_PATH_V3,
 }
 
 # 节点显示名称映射：定义在UI中显示的节点名称
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PDIMAGE_SAVE_PATH_V2": "PDIMAGE:SAVE_PATH_V2",
+    "PDIMAGE_SAVE_PATH_V3": "PDIMAGE:SAVE_PATH_V3",
 } 

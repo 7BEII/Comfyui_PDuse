@@ -2,7 +2,7 @@ import os
 import re
 import time
 
-class PDstring_Save:
+class PDTEXT_SAVE_PATH_V2:
     """
     文本保存节点 - 将文本内容保存到指定路径的文件中
     
@@ -86,7 +86,7 @@ class PDstring_Save:
             full_filename = f"{filename}{file_extension}"
         else:
             pattern = re.compile(
-                f"{re.escape(filename)}{re.escape(filename_delimiter)}(\\d{{{filename_number_padding}}}){re.escape(file_extension)}"
+                f"{re.escape(filename)}{re.escape(filename_delimiter)}(\\d{{{filename_number_padding},}}){re.escape(file_extension)}"
             )
             existing_files = [f for f in os.listdir(path) if pattern.match(f)] if os.path.exists(path) else []
             
@@ -95,25 +95,28 @@ class PDstring_Save:
                 numbers = [int(pattern.match(f).group(1)) for f in existing_files]
                 next_num = max(numbers) + 1 if numbers else 1
             
-            full_filename = f"{filename}{filename_delimiter}{next_num:0{filename_number_padding}}{file_extension}"
+            # 自动调整位数：如果next_num位数超过padding，使用实际位数
+            actual_padding = max(filename_number_padding, len(str(next_num)))
+            full_filename = f"{filename}{filename_delimiter}{next_num:0{actual_padding}}{file_extension}"
             
             # 处理可能的冲突
             while os.path.exists(os.path.join(path, full_filename)):
                 next_num += 1
-                full_filename = f"{filename}{filename_delimiter}{next_num:0{filename_number_padding}}{file_extension}"
+                actual_padding = max(filename_number_padding, len(str(next_num)))
+                full_filename = f"{filename}{filename_delimiter}{next_num:0{actual_padding}}{file_extension}"
 
         # 写入文件
         file_path = os.path.join(path, full_filename)
         try:
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(text)
-            print(f"[PDstring_Save] 文本已保存到: {file_path}")
+            print(f"[PDTEXT_SAVE_PATH_V2] 文本已保存到: {file_path}")
         except Exception as e:
             error_path = os.path.join(comfy_dir, "output", "txt", f"error_{filename}{file_extension}")
             with open(error_path, 'w', encoding='utf-8') as f:
                 f.write(text)
-            print(f"[PDstring_Save] 无法保存到 {file_path}, 错误: {e}")
-            print(f"[PDstring_Save] 文本已保存到备用位置: {error_path}")
+            print(f"[PDTEXT_SAVE_PATH_V2] 无法保存到 {file_path}, 错误: {e}")
+            print(f"[PDTEXT_SAVE_PATH_V2] 文本已保存到备用位置: {error_path}")
 
         return ()
 
@@ -123,9 +126,9 @@ class PDstring_Save:
 
 # 节点映射
 NODE_CLASS_MAPPINGS = {
-    "PDstring_Save": PDstring_Save,
+    "PDTEXT_SAVE_PATH_V2": PDTEXT_SAVE_PATH_V2,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PDstring_Save": "PDstring:txtSave",
+    "PDTEXT_SAVE_PATH_V2": "PDTEXT:SAVE_PATH_V2",
 }

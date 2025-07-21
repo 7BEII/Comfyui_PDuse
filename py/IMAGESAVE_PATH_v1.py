@@ -8,6 +8,7 @@ from PIL.PngImagePlugin import PngInfo
 import os
 import numpy as np
 import json
+import re
 from comfy.cli_args import args
 import folder_paths
 from datetime import datetime
@@ -93,10 +94,8 @@ class PD_imagesave_path:
         """
         results = list()
         
-        # 获取完整的保存路径和文件名信息
-        full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(
-            filename_prefix, output_dir, images[0].shape[1], images[0].shape[0]
-        )
+        # 自定义计数器逻辑，只检查相同扩展名的文件
+        counter = self._get_next_counter(output_dir, filename_prefix, ".png")
             
         # 遍历图像数组，逐个保存
         for (batch_number, image) in enumerate(images):
@@ -117,24 +116,57 @@ class PD_imagesave_path:
                     for x in extra_pnginfo:
                         metadata.add_text(x, json.dumps(extra_pnginfo[x]))
             
-            # 处理文件名，替换批次号占位符
-            filename_with_batch_num = filename.replace("%batch_num%", str(batch_number))
             # 生成最终文件名，包含计数器和扩展名
-            file = f"{filename_with_batch_num}_{counter:05}_.png"
+            file = f"{filename_prefix}_{counter:05}_.png"
             
             # 保存图像文件，包含元数据和指定的压缩级别
-            img.save(os.path.join(full_output_folder, file), pnginfo=metadata, compress_level=self.compress_level)
+            img.save(os.path.join(output_dir, file), pnginfo=metadata, compress_level=self.compress_level)
                 
             # 生成返回结果信息，包含文件名和路径
-            display_path = os.path.join(output_dir, subfolder)
             results.append({
                 "filename": file,         # 保存的文件名
-                "subfolder": display_path, # 子文件夹路径
+                "subfolder": output_dir, # 子文件夹路径
                 "type": self.type         # 文件类型
             })
             counter += 1  # 递增计数器
         
         return results
+    
+    def _get_next_counter(self, output_dir, filename_prefix, extension):
+        """
+        获取下一个可用的计数器值，只检查相同扩展名的文件
+        
+        Args:
+            output_dir (str): 输出目录
+            filename_prefix (str): 文件名前缀
+            extension (str): 文件扩展名
+            
+        Returns:
+            int: 下一个可用的计数器值
+        """
+        existing_counters = []
+        try:
+            # 构建匹配模式
+            pattern = f"{re.escape(filename_prefix)}_(\d+)_"
+            
+            for filename in os.listdir(output_dir):
+                # 只检查相同扩展名的文件
+                file_ext = os.path.splitext(filename)[1].lower()
+                if file_ext != extension.lower():
+                    continue
+                
+                # 匹配文件名模式
+                match = re.search(pattern, filename)
+                if match:
+                    existing_counters.append(int(match.group(1)))
+        except Exception as e:
+            print(f"读取目录失败: {e}")
+        
+        # 返回下一个可用的计数器值
+        if existing_counters:
+            return max(existing_counters) + 1
+        else:
+            return 1
 
 
 # 节点类映射：将类名映射到实际的类
