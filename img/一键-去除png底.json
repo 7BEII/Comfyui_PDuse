@@ -1,0 +1,218 @@
+{
+  "id": "1dda7a89-ae82-4a93-a389-c8613e66c8bb",
+  "revision": 0,
+  "last_node_id": 9,
+  "last_link_id": 17,
+  "nodes": [
+    {
+      "id": 7,
+      "type": "SaveImage",
+      "pos": [
+        1178.749267578125,
+        -1572.904052734375
+      ],
+      "size": [
+        325.3446044921875,
+        576.3179321289062
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        793.4548950195312,
+        -1573.533447265625
+      ],
+      "size": [
+        367.2834167480469,
+        576.5281372070312
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            12
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "PD 描述图片生成海报 (2).png",
+        "image"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "PD_RemoveBlackBackground",
+      "pos": [
+        1547.0264892578125,
+        -1467.4490966796875
+      ],
+      "size": [
+        210,
+        126
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            16
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            17
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PD_RemoveBlackBackground"
+      },
+      "widgets_values": [
+        0.9,
+        true,
+        false
+      ]
+    },
+    {
+      "id": 6,
+      "type": "JoinImageWithAlpha",
+      "pos": [
+        1612.926025390625,
+        -1293.910400390625
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 16
+        },
+        {
+          "name": "alpha",
+          "type": "MASK",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "JoinImageWithAlpha"
+      }
+    }
+  ],
+  "links": [
+    [
+      9,
+      6,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      12,
+      2,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ],
+    [
+      16,
+      9,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      17,
+      9,
+      1,
+      6,
+      1,
+      "MASK"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "一键-去除png底",
+      "bounding": [
+        783.4548950195312,
+        -1647.1334228515625,
+        983.5715942382812,
+        660.5473022460938
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.5730855330116813,
+      "offset": [
+        419.0210832222882,
+        2265.533421401424
+      ]
+    },
+    "frontendVersion": "1.22.2"
+  },
+  "version": 0.4
+}

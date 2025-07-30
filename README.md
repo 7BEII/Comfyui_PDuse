@@ -27,6 +27,23 @@ pip install -r requirements.txt
 
 ### text处理
 
+##### PD Show Text
+> 文本显示节点，用于在ComfyUI界面中显示文本信息，通常用于显示处理结果、状态报告或调试信息。
+
+- text：要显示的文本内容（支持来自其他节点的文本输出）
+
+**功能特点：**
+- ✅ 在工作流中实时显示文本信息
+- ✅ 支持显示处理结果和状态报告
+- ✅ 可用于调试和监控节点执行状态
+- ✅ 支持多行文本显示
+- ✅ 自动保存到工作流信息中
+
+**使用场景：**
+- 显示文件处理统计信息
+- 显示错误信息和警告
+- 监控批处理进度
+- 调试工作流执行状态
 
 ##### PD:Image Blend Text
 ![PD_ImageMergerWithText](img/PD_ImageMergerWithText.png)
@@ -164,6 +181,19 @@ pip install -r requirements.txt
 - padding：裁切后保留的边距像素（0-100）
 - output_path：输出路径（可选，不填则覆盖原图）
 
+##### PD:remove_background
+> 智能背景移除节点，去除图像中的黑色背景，输出原图和透明度掩码，支持阈值调节和边缘平滑。
+
+- image：输入图像张量（必填）
+- threshold：黑色检测阈值（0.0-1.0，默认0.9）
+- smooth_edges：是否平滑边缘（可选，默认True）
+- invert_mask：是否反转掩码（可选，默认True）
+
+**输出：**
+- image：原始图像（保持输入尺寸不变）
+- mask：透明度掩码（白色=保留区域，黑色=透明区域）
+
+
 ##### PDJSON_Group
 ![PDJSON_Group节点界面](img/PDJSON_Group.png)
 > JSON文件输出路径和格式设置节点。
@@ -175,6 +205,58 @@ pip install -r requirements.txt
 - target_title：目标标题
 - output_folder：输出文件夹
 - new_filename：新文件名
+
+### 文件处理
+
+##### PD:number_start
+
+> 文件排序重命名节点，将"T_1", "T_2", "T_3"格式的文件名重命名为"1_T", "2_T", "3_T"，T参数可以自定义为其他单词，直接执行重命名操作。
+
+- folder_path：目标文件夹路径（必填）
+- target_prefix：目标前缀词（默认为"T"，可自定义为其他单词）
+
+**功能特点：**
+- ✅ 智能识别 `前缀_数字` 格式的文件名
+- ✅ 按数字顺序重命名，保持正确排序  
+- ✅ 支持任意文件扩展名 (.jpg, .png, .txt 等)
+- ✅ 详细的操作报告，包含成功/失败/跳过的文件统计
+- ✅ 错误处理，避免覆盖已存在的文件
+
+**使用示例：**
+- 输入文件：`T_1.jpg`, `T_2.png`, `T_10.txt`
+- 输出文件：`1_T.jpg`, `2_T.png`, `10_T.txt`
+
+##### PD:replace_word
+> 文件名关键词替换/删除节点，在文件夹中查找包含指定关键词的文件，将关键词替换为新的关键词或删除关键词。支持格式筛选，严格匹配（区分大小写）。
+
+- folder_path：目标文件夹路径（必填）
+- old_keyword：要替换/删除的关键词（默认为"R"）
+- new_keyword：新的关键词（默认为"start"，留空则删除关键词）
+- file_format：文件格式筛选（默认为"full"不限制，可选：jpg/png/txt/jpeg/bmp/gif/webp）
+
+**功能特点：**
+- ✅ 智能检索包含指定关键词的文件
+- ✅ 严格匹配模式，只替换完全一致的关键词（区分大小写）
+- ✅ 支持关键词替换和删除两种操作模式
+- ✅ 支持格式筛选，可指定只处理特定格式的文件
+- ✅ 详细的操作报告，包含成功/失败/跳过的文件统计
+- ✅ 错误处理，避免覆盖已存在的文件
+- ✅ 自动跳过无需更改的文件
+
+**使用示例：**
+- 原文件：`1_R.jpg`, `2_R.png`, `test_R.txt`
+- 设置：old_keyword="R", new_keyword="start", file_format="full"
+- 结果文件：`1_start.jpg`, `2_start.png`, `test_start.txt`
+
+**格式筛选示例：**
+- 原文件：`1_R.jpg`, `2_R.png`, `test_R.txt`
+- 设置：old_keyword="R", new_keyword="start", file_format="jpg"
+- 结果文件：`1_start.jpg`（只处理jpg文件）, `2_R.png`, `test_R.txt`（png和txt文件被跳过）
+
+**关键词删除示例：**
+- 原文件：`1_temp.jpg`, `2_temp.png`, `test_temp.txt`
+- 设置：old_keyword="temp", new_keyword=""（留空）, file_format="full"
+- 结果文件：`1_.jpg`, `2_.png`, `test_.txt`（删除temp关键词）
 
 ---
 ## 🎯 应用工作流：workflow
