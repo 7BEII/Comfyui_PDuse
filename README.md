@@ -45,17 +45,18 @@ pip install -r requirements.txt
 - 监控批处理进度
 - 调试工作流执行状态
 
-##### PD:Image Blend Text
-![PD_ImageMergerWithText](img/PD_ImageMergerWithText.png)
+##### PD:Image_and_Text
+![PD_Image_and_Text](img/PD_Image_and_Text.png)
 > 字体文件可以放入文件夹fonts 。
-> 两张图片合在一起，然后两个文字分别加上去，制作对比图使用。
+> 将两张图片左右合并，并在底部添加文字标注的ComfyUI节点。
 
 - image1+ ​​​​image2 ：尽量要求同样尺寸，如果不同，会自动等比例缩放对齐
 - text1 + text2   ：支持中文，需字体文件包含中文编码，可输入如"效果图"："原图"之类
-- font_size​：小于20可能看不清，大于80可能超出画布
+- font_size​：小于20可能看不清，大于90可能超出画布
 - ​​padding_up​：文字​​上方​​的留白高度，10-30
 - ​​padding_down：文字​**​下方​**​的留白高度  10- 1000 ,可以往下扩多一些方便排版
 - font_file​  选择字体样式, 需将.ttf/.otf文件放入插件目录的fonts文件夹
+- longer_size ： 单张图的最长边尺寸限制
 ##### PD_Text Overlay Node
 ![PD_Text Overlay Node](img/PD_Text%20Overlay%20Node.png)
 > 给图片添加文字，并且指定位置贴上去。
@@ -162,6 +163,32 @@ pip install -r requirements.txt
 - vertical_align：垂直对齐方式
 - mask_optional：可选的mask输入
 
+##### PD_image ratiosize
+![PD_image ratiosize](img/PD_image%20ratiosize.png)
+> 基于最长边的智能分辨率计算节点，根据宽高比和最长边尺寸自动计算图像分辨率，特别适合AI图像生成工作流。
+
+- max_dimension：最长边尺寸（256-4096，默认1024）
+- aspect_ratio：宽高比选择（3:4竖向、4:3横向、1:1正方形）
+- divisible_by：整除要求（8/16/32/64，默认64）
+
+**功能特点：**
+- ✅ 基于最长边计算，符合用户习惯
+- ✅ 确保分辨率能被64整除，AI模型友好
+- ✅ 提供直观的预览图像显示
+- ✅ 支持多种常用宽高比
+- ✅ 输出整数值，可直接连接其他节点
+
+**计算示例：**
+- 3:4比例 + 1024最长边 → 768×1024
+- 4:3比例 + 1024最长边 → 1024×768  
+- 1:1比例 + 1024最长边 → 1024×1024
+
+**输出内容：**
+- width：计算出的宽度（INT）
+- height：计算出的高度（INT）
+- resolution：分辨率字符串（如"768 x 1024"）
+- preview：预览图像（显示计算结果）
+
 ##### PD_CropBorder
 ![PD_CropBorder](img/PDimage_cropborder.png)
 > 智能图像边框裁切节点，自动检测并移除图片边缘的黑色或白色边框。
@@ -257,6 +284,27 @@ pip install -r requirements.txt
 - 原文件：`1_temp.jpg`, `2_temp.png`, `test_temp.txt`
 - 设置：old_keyword="temp", new_keyword=""（留空）, file_format="full"
 - 结果文件：`1_.jpg`, `2_.png`, `test_.txt`（删除temp关键词）
+
+##### PD-Excel
+![PD-Excel](img/PD-Excel.png)
+> Excel数据处理节点，用于在ComfyUI中处理Excel文件数据，支持读取、写入和数据转换操作。
+
+- excel_file：Excel文件路径（必填）
+- sheet_name：工作表名称（可选，默认为第一个工作表）
+- operation：操作类型（read/write/convert）
+
+**功能特点：**
+- ✅ 支持Excel文件的读取和写入操作
+- ✅ 支持多种数据格式转换
+- ✅ 支持工作表选择和数据筛选
+- ✅ 提供详细的数据处理报告
+- ✅ 支持批量数据处理
+
+**使用场景：**
+- 处理图像标注数据
+- 批量文件信息整理
+- 数据统计和报表生成
+- 工作流参数配置管理
 
 ---
 ## 🎯 应用工作流：workflow

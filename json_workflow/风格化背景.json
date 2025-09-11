@@ -1,0 +1,375 @@
+{
+  "id": "32939573-29e9-41ac-b442-a38ea3822f44",
+  "revision": 0,
+  "last_node_id": 7,
+  "last_link_id": 6,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "GeminiImageNode",
+      "pos": [
+        909.9617309570312,
+        8.882808685302734
+      ],
+      "size": [
+        210,
+        600
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 1
+        },
+        {
+          "name": "files",
+          "shape": 7,
+          "type": "GEMINI_INPUT_FILES",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ]
+        },
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GeminiImageNode"
+      },
+      "widgets_values": [
+        "这个照片转换成3D卡通渲染风格滤镜，不要字体，不要改变画面的内容，尽量保持画面的一致",
+        "gemini-2.5-flash-image-preview",
+        891783921110393,
+        "randomize"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 2,
+      "type": "FluxKontextProImageNode",
+      "pos": [
+        1156.4912109375,
+        12.708370208740234
+      ],
+      "size": [
+        355.4226379394531,
+        507.1069641113281
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "input_image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FluxKontextProImageNode"
+      },
+      "widgets_values": [
+        "converted into a 3D cartoon rendering style filter. ",
+        "3:4",
+        3,
+        50,
+        821599723813943,
+        "randomize",
+        false
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 3,
+      "type": "SaveImage",
+      "pos": [
+        1116.2650146484375,
+        -499.1861877441406
+      ],
+      "size": [
+        278.4385986328125,
+        458.2720031738281
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 3
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "OpenAIGPTImage1",
+      "pos": [
+        1530.3143310546875,
+        14.008419036865234
+      ],
+      "size": [
+        284.0799865722656,
+        322.68292236328125
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 4
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "OpenAIGPTImage1"
+      },
+      "widgets_values": [
+        "这个照片转换成3D皮克斯动画",
+        913209628,
+        "randomize",
+        "high",
+        "opaque",
+        "auto",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        792.0514526367188,
+        -495.9161682128906
+      ],
+      "size": [
+        300.38421630859375,
+        443.46759033203125
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            1,
+            2,
+            4
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "c1815ff8-86a7-4b02-90b2-02d49fef5899.jpg",
+        "image"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "SaveImage",
+      "pos": [
+        1424.0054931640625,
+        -489.8465270996094
+      ],
+      "size": [
+        273.1234436035156,
+        442.2900390625
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 5
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "SaveImage",
+      "pos": [
+        1717.7738037109375,
+        -493.9860534667969
+      ],
+      "size": [
+        309.2079162597656,
+        446.02740478515625
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 6
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      5,
+      0,
+      1,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      5,
+      0,
+      2,
+      0,
+      "IMAGE"
+    ],
+    [
+      3,
+      1,
+      0,
+      3,
+      0,
+      "IMAGE"
+    ],
+    [
+      4,
+      5,
+      0,
+      4,
+      0,
+      "IMAGE"
+    ],
+    [
+      5,
+      2,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      6,
+      4,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "风格化背景",
+      "bounding": [
+        782.0514526367188,
+        -572.7861938476562,
+        1254.929443359375,
+        1191.6689453125
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.495000000000005,
+      "offset": [
+        573.3354937391432,
+        1007.3419397120006
+      ]
+    },
+    "frontendVersion": "1.23.4",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
