@@ -70,6 +70,17 @@ pip install -r requirements.txt
 - letter_gap：字符间距（可为负数，负数使字母靠近）
 - font_name：使用的字体文件名（从fonts目录中选择）
 
+##### PD_Add Label
+> 在图像四边添加标签文字，支持百分比定位和多方向添加。
+
+- 位置控制: text_x(1-100) 和 text_y(1-100) 百分比定位
+- 标签尺寸: height(1-1000) 控制标签区域大小
+- 文字样式: font_size(8-200) 和 font 选择
+- 颜色模式:
+  - light = 白底黑字
+  - dark = 黑底白字
+- 添加方向: up/down/left/right 四个方向
+
 ##### PD:imageconcante_V1
 ![PDimageconcante_V1](img/PDimageconcante_V1.png)
 > 两张图片按指定方向拼接合并。
