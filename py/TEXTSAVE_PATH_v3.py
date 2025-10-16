@@ -101,8 +101,9 @@ class PDTEXT_SAVE_PATH_V3:
                 else:
                     # 使用数字编号
                     if len(text_list) > 1:
-                        # 多个文本时，使用索引编号
-                        counter = i + 1
+                        # 多个文本时，从现有最大编号开始递增
+                        start_counter = self._get_next_counter(output_path, filename, delimiter, padding, number_start, file_extension)
+                        counter = start_counter + i
                     else:
                         # 单个文本时，查找现有文件的最大编号
                         counter = self._get_next_counter(output_path, filename, delimiter, padding, number_start, file_extension)
@@ -117,16 +118,32 @@ class PDTEXT_SAVE_PATH_V3:
                         # 数字在末尾: filename_001.txt
                         full_filename = f"{filename}{delimiter}{counter:0{actual_padding}}{file_extension}"
                 
-                # 确保文件名唯一
-                original_filename = full_filename
-                counter_suffix = 1
-                while os.path.exists(os.path.join(output_path, full_filename)):
-                    name_part, ext_part = os.path.splitext(original_filename)
-                    full_filename = f"{name_part}_dup{counter_suffix}{ext_part}"
-                    counter_suffix += 1
+                # 如果文件仍然存在，继续递增数字直到找到可用的文件名
+                file_path = os.path.join(output_path, full_filename)
+                while os.path.exists(file_path):
+                    if padding == 0:
+                        # 处理无数字编号的情况
+                        base_name, ext = os.path.splitext(full_filename)
+                        # 尝试提取现有的数字后缀
+                        match = re.search(r'_(\d+)$', base_name)
+                        if match:
+                            current_num = int(match.group(1))
+                            base_name = base_name[:match.start()]
+                            full_filename = f"{base_name}_{current_num + 1}{ext}"
+                        else:
+                            full_filename = f"{base_name}_1{ext}"
+                    else:
+                        # 递增计数器
+                        counter += 1
+                        actual_padding = max(padding, len(str(counter)))
+                        if number_start:
+                            full_filename = f"{counter:0{actual_padding}}{delimiter}{filename}{file_extension}"
+                        else:
+                            full_filename = f"{filename}{delimiter}{counter:0{actual_padding}}{file_extension}"
+                    
+                    file_path = os.path.join(output_path, full_filename)
                 
                 # 写入文件
-                file_path = os.path.join(output_path, full_filename)
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(text_content)
                 
@@ -145,22 +162,30 @@ class PDTEXT_SAVE_PATH_V3:
         获取下一个可用的计数器值
         """
         try:
+            if not os.path.exists(output_path):
+                return 1
+            
             # 根据number_start决定正则表达式模式
             if number_start:
-                # 数字在开头: 001_filename.txt (匹配至少padding位数字)
+                # 数字在开头: 001_filename.txt (匹配任意位数字)
                 pattern = re.compile(
-                    f"(\\d{{{padding},}}){re.escape(delimiter)}{re.escape(filename)}{re.escape(file_extension)}"
+                    f"(\\d+){re.escape(delimiter)}{re.escape(filename)}{re.escape(file_extension)}$"
                 )
             else:
-                # 数字在末尾: filename_001.txt (匹配至少padding位数字)
+                # 数字在末尾: filename_001.txt (匹配任意位数字)
                 pattern = re.compile(
-                    f"{re.escape(filename)}{re.escape(delimiter)}(\\d{{{padding},}}){re.escape(file_extension)}"
+                    f"{re.escape(filename)}{re.escape(delimiter)}(\\d+){re.escape(file_extension)}$"
                 )
             
-            existing_files = [f for f in os.listdir(output_path) if pattern.match(f)] if os.path.exists(output_path) else []
+            existing_files = os.listdir(output_path)
+            numbers = []
             
-            if existing_files:
-                numbers = [int(pattern.match(f).group(1)) for f in existing_files]
+            for f in existing_files:
+                match = pattern.match(f)
+                if match:
+                    numbers.append(int(match.group(1)))
+            
+            if numbers:
                 return max(numbers) + 1
             else:
                 return 1
@@ -177,4 +202,4 @@ NODE_CLASS_MAPPINGS = {
 # 节点显示名称映射：定义在UI中显示的节点名称
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PDTEXT_SAVE_PATH_V3": "PDTEXT:SAVE_PATH_V3",
-} 
+}
