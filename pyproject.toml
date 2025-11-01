@@ -1,0 +1,21 @@
+[project]
+name = "Comfyui_PDuse"
+description = "A comprehensive collection of custom nodes for ComfyUI, focusing on image processing, text handling, and workflow optimization. Includes nodes for image blending, text overlay, batch processing, image resizing, and advanced save operations."
+version = "1.0.1"
+license = { text = "MIT" }
+dependencies = [
+    "xlrd",
+    "numpy", 
+    "Pillow",
+    "torch",
+    "torchvision"
+]
+
+[project.urls]
+Repository = "https://github.com/7BEII/Comfyui_PDuse"
+# Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "pandybeii" 
+DisplayName = "Comfyui_PDuse"
+Icon = "https://raw.githubusercontent.com/7BEII/Comfyui_PDuse/main/img/image.png"

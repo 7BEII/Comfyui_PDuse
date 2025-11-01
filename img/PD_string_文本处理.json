@@ -1,0 +1,691 @@
+{
+  "id": "0984970a-c531-4e67-912c-631f20a66b0a",
+  "revision": 0,
+  "last_node_id": 49,
+  "last_link_id": 27,
+  "nodes": [
+    {
+      "id": 17,
+      "type": "easy showAnything",
+      "pos": [
+        460,
+        -1510
+      ],
+      "size": [
+        633.6422729492188,
+        251.4248809814453
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "anything",
+          "type": "*",
+          "link": 14,
+          "label": "anything",
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null,
+          "label": "output"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "修改完成！已处理的文件保存在目录：A:\\AICG\\批处理\\s\n文件列表：A:\\AICG\\批处理\\s\\修改文件.json_1.json, A:\\AICG\\批处理\\s\\修改文件.json_2.json"
+      ]
+    },
+    {
+      "id": 18,
+      "type": "Note",
+      "pos": [
+        460,
+        -1210
+      ],
+      "size": [
+        627.49560546875,
+        162.11875915527344
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\nPD_groupfontsize:主要用来修改json文件里面编组字体大小，\nfont_size 设置：主要是要统一设置的字体大小。\ntile：保留那个不需要改变字体大小的组。"
+      ],
+      "color": "#c09430",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 22,
+      "type": "easy showAnything",
+      "pos": [
+        1151.8165283203125,
+        -1560.10986328125
+      ],
+      "size": [
+        679.0018310546875,
+        206.1938934326172
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "anything",
+          "type": "*",
+          "link": 13,
+          "label": "anything",
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null,
+          "label": "output"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "批量处理完成！已处理 2 个文件，全部按照编号递增节点处理。\n文件保存在目录：A:\\AICG\\批处理\\s\n文件列表：\nA:\\AICG\\批处理\\s\\Modified_1.json\nA:\\AICG\\批处理\\s\\Modified_2.json"
+      ]
+    },
+    {
+      "id": 23,
+      "type": "Note",
+      "pos": [
+        1165.8165283203125,
+        -1296.10986328125
+      ],
+      "size": [
+        658.6842041015625,
+        189.38705444335938
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n\"input_folder\":   输入文件夹路径         \n\"output_folder\":  输出文件夹路径\n\"start_x\": \"INT\",起始坐标 X\n\"start_y\": \"INT\",   起始坐标 Y\n\"increment\": 坐标递增步长\n\"file_prefix\": 输出文件前缀"
+      ],
+      "color": "#c09430",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 24,
+      "type": "PD_RemoveColorWords",
+      "pos": [
+        1900,
+        -1780
+      ],
+      "size": [
+        674.57666015625,
+        158.33114624023438
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "Result",
+          "name": "Result",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            12
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PD_RemoveColorWords"
+      },
+      "widgets_values": [
+        "A:\\1_area\\area_模型训练\\训练集_训练\\#真人\\xiaomei_v1\\10_xiaomeitou",
+        "1",
+        "1 3"
+      ]
+    },
+    {
+      "id": 25,
+      "type": "easy showAnything",
+      "pos": [
+        1898.2294921875,
+        -1573.1099853515625
+      ],
+      "size": [
+        679.0018310546875,
+        206.1938934326172
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "type": "*",
+          "link": 12,
+          "label": "anything",
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null,
+          "label": "output"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "错误：目录 A:\\1_area\\area_模型训练\\训练集_训练\\#真人\\xiaomei_v1\\10_xiaomeitou 不存在！"
+      ]
+    },
+    {
+      "id": 26,
+      "type": "Note",
+      "pos": [
+        1908,
+        -1313
+      ],
+      "size": [
+        676.260986328125,
+        204.2787322998047
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n\"directory_path:  # 文件夹路径\n\"words_to_remove: # 要删除的单词\n"
+      ],
+      "color": "#c09430",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 27,
+      "type": "Fast Groups Bypasser (rgthree)",
+      "pos": [
+        430,
+        -990
+      ],
+      "size": [
+        1042.1607666015625,
+        178
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "OPT_CONNECTION",
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "matchColors": "",
+        "matchTitle": "",
+        "showNav": true,
+        "sort": "position",
+        "customSortAlphabet": "",
+        "toggleRestriction": "default"
+      }
+    },
+    {
+      "id": 28,
+      "type": "Note",
+      "pos": [
+        1514,
+        -984
+      ],
+      "size": [
+        1077.8734130859375,
+        256.3345947265625
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "使用说明",
+      "properties": {},
+      "widgets_values": [
+        "1.2 工作流用示例\n\n在workflow目录下有json格式的工作流示例文件，示范了如何在ComfyUI中使用这些节点。\n\n下载解压zip文件，将得到的文件夹复制到 ComfyUI\\custom_nodes\\。\n\n1.3 节点使用示例\n\n在ComfyUI画布双击, 在搜索框输入\"PD\"。\n\nhttps://github.com/7BEII/Comfyui_PDuse"
+      ],
+      "color": "#c09430",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 29,
+      "type": "PDJSON_BatchJsonIncremental",
+      "pos": [
+        1160,
+        -1800
+      ],
+      "size": [
+        650,
+        178
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "result_message",
+          "name": "result_message",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDJSON_BatchJsonIncremental"
+      },
+      "widgets_values": [
+        "A:\\1_area\\area_python\\pojie",
+        "A:\\1_area\\area_python\\output",
+        0,
+        0,
+        20,
+        "Modified"
+      ]
+    },
+    {
+      "id": 30,
+      "type": "PDJSON_Group",
+      "pos": [
+        460,
+        -1800
+      ],
+      "size": [
+        620,
+        202
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "Result",
+          "name": "Result",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            14
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDJSON_Group"
+      },
+      "widgets_values": [
+        "A:\\path\\to\\json_files",
+        "Blue",
+        "disable",
+        14,
+        "",
+        "",
+        "_fix01"
+      ]
+    },
+    {
+      "id": 40,
+      "type": "PD_Text Overlay Node",
+      "pos": [
+        3090,
+        -980
+      ],
+      "size": [
+        315,
+        222
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "image",
+          "name": "image",
+          "type": "IMAGE",
+          "link": 26
+        },
+        {
+          "name": "font_color",
+          "type": "STRING",
+          "widget": {
+            "name": "font_color"
+          },
+          "link": 25
+        }
+      ],
+      "outputs": [
+        {
+          "label": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            24
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PD_Text Overlay Node"
+      },
+      "widgets_values": [
+        "Hello",
+        125,
+        "#000000",
+        0.5,
+        0.8,
+        0,
+        "FZCCHK_blod.TTF"
+      ]
+    },
+    {
+      "id": 43,
+      "type": "LayerUtility: ColorPicker",
+      "pos": [
+        3090,
+        -1150
+      ],
+      "size": [
+        300,
+        94
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "value",
+          "name": "value",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            25
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LayerUtility: ColorPicker",
+        "cnr_id": "comfyui_layerstyle",
+        "ver": "04fa5d6d5fb5eb382aeb90909f06f2272d584f0a"
+      },
+      "widgets_values": [
+        "#FFFFFF",
+        "HEX"
+      ],
+      "color": "rgba(38, 73, 116, 0.7)"
+    },
+    {
+      "id": 44,
+      "type": "LoadImage",
+      "pos": [
+        2770,
+        -1130
+      ],
+      "size": [
+        280,
+        360
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            26
+          ]
+        },
+        {
+          "label": "MASK",
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30"
+      },
+      "widgets_values": [
+        "Grid-mc潮流_00016_.png",
+        "image"
+      ]
+    },
+    {
+      "id": 49,
+      "type": "PDIMAGE_Rename",
+      "pos": [
+        2710.3798828125,
+        -1605.3349609375
+      ],
+      "size": [
+        405.5999755859375,
+        250
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "result_summary",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDIMAGE_Rename"
+      },
+      "widgets_values": [
+        "E:\\AIGC研究室\\work_匠韵工作文件\\03-客户项目\\03-MH\\0430\\亚马逊_NAME",
+        "E:\\AIGC研究室\\work_匠韵工作文件\\03-客户项目\\03-MH\\0430\\亚马逊MH0430",
+        "亚马逊MH0430",
+        "_",
+        "jpg",
+        1920,
+        1,
+        true,
+        true
+      ]
+    },
+    {
+      "id": 42,
+      "type": "SaveImage",
+      "pos": [
+        3440,
+        -1140
+      ],
+      "size": [
+        270,
+        360
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 24
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.30"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    }
+  ],
+  "links": [
+    [
+      12,
+      24,
+      0,
+      25,
+      0,
+      "*"
+    ],
+    [
+      13,
+      29,
+      0,
+      22,
+      0,
+      "*"
+    ],
+    [
+      14,
+      30,
+      0,
+      17,
+      0,
+      "*"
+    ],
+    [
+      24,
+      40,
+      0,
+      42,
+      0,
+      "IMAGE"
+    ],
+    [
+      25,
+      43,
+      0,
+      40,
+      1,
+      "STRING"
+    ],
+    [
+      26,
+      44,
+      0,
+      40,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "JSON_GROUP",
+      "bounding": [
+        430,
+        -1880,
+        684.13330078125,
+        837.0852661132812
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "全部按照编号递增节点处理。",
+      "bounding": [
+        1140,
+        -1880,
+        704.736083984375,
+        833.3998413085938
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "PD_批量去除文本字体",
+      "bounding": [
+        1870,
+        -1880,
+        723.3157348632812,
+        834.5201416015625
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "PD_string_文本处理",
+      "bounding": [
+        430,
+        -2170,
+        2160.88671875,
+        256.52471923828125
+      ],
+      "color": "#3f789e",
+      "font_size": 180,
+      "flags": {}
+    },
+    {
+      "id": 5,
+      "title": "Group",
+      "bounding": [
+        2730,
+        -1220,
+        1000,
+        475.6000061035156
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.33809166040571226,
+      "offset": [
+        465.8638371672023,
+        2817.769331743806
+      ]
+    },
+    "ue_links": [],
+    "frontendVersion": "1.22.2"
+  },
+  "version": 0.4
+}
