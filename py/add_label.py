@@ -55,7 +55,7 @@ class CustomAddLabel:
     
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "add_custom_label"
-    CATEGORY = "image/text"
+    CATEGORY = "PDuse/Image"
     DESCRIPTION = """
     Adds text labels to images with percentage-based positioning.
     text_x: 1-100 (1=left aligned, 100=right aligned)

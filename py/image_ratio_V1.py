@@ -30,7 +30,7 @@ class ImageRatioCrop:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("cropped_image",)
     FUNCTION = "crop_by_ratio"
-    CATEGORY = "PD/ImageProcessing"
+    CATEGORY = "PDuse/Image"
 
     def crop_by_ratio(self, image, ratio_a, ratio_b, max_size):
         """

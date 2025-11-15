@@ -17,7 +17,7 @@ class PD_MaskSelectorByAreaLeft:
     RETURN_TYPES = ("IMAGE", "MASK", "INT", "INT")
     RETURN_NAMES = ("image", "mask", "x", "y")
     FUNCTION = "select_region"
-    CATEGORY = "mask"
+    CATEGORY = "PDuse/Mask"
 
     def _connected_regions(self, mask_uint8):
         """检测所有连通区域"""

@@ -17,7 +17,7 @@ class PDStringInput:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("string",)
     FUNCTION = "execute"
-    CATEGORY = "PD/Logic"
+    CATEGORY = "PDuse/Text"
 
     def execute(self, value):
         """
@@ -48,7 +48,7 @@ class PDStringConcate:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("joined_string",)
     FUNCTION = "joinstring"
-    CATEGORY = "PD/Logic"
+    CATEGORY = "PDuse/Text"
 
     def joinstring(self, string1, string2, delimiter):
         """

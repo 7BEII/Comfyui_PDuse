@@ -24,7 +24,7 @@ class PD_empty_word:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("formatted_string",)
     FUNCTION = "format_string"
-    CATEGORY = "utils/text"
+    CATEGORY = "PDuse/Text"
   
     def format_string(self, input_string, line_break_keyword, remove_empty_lines=True, trim_whitespace=True):
         """

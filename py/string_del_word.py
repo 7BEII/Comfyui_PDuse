@@ -20,7 +20,7 @@ class PD_del_word:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("result_string",)
     FUNCTION = "delete_keyword"
-    CATEGORY = "utils/text"
+    CATEGORY = "PDuse/Text"
     
     def delete_keyword(self, input_string, keyword):
         """

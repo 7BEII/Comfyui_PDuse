@@ -57,7 +57,7 @@ class ImageBlendText:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("merged_image",)
     FUNCTION = "merge_images_with_text"
-    CATEGORY = "PD/ImageProcessing"
+    CATEGORY = "PDuse/Image"
 
     def merge_images_with_text(self, image1, image2, text1, text2, longer_size=1024, font_size=90, padding_up=10, padding_down=20, font_file="system", text_style="dark"):
         """

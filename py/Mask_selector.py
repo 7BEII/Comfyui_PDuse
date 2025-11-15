@@ -20,7 +20,7 @@ class PD_MaskSelector:
     RETURN_TYPES = ("IMAGE", "MASK")
     RETURN_NAMES = ("image", "mask")
     FUNCTION = "select_region"
-    CATEGORY = "mask"
+    CATEGORY = "PDuse/Mask"
 
     def _connected_regions(self, mask_uint8, min_area=100):
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(

@@ -1,327 +1,944 @@
+# ComfyUI PDuse 自定义节点集
 
-![ComfyUI PDuse](img/image.png)
+ComfyUI的自定义节点集合，专注于图像处理和动画生成。
 
-[工作流合集](https://github.com/7BEII/Comfyui_PDuse/tree/master/img)|[视频介绍](https://www.bilibili.com/video/BV11TVwzYE9y/?spm_id_from=333.1387.collection.video_card.click&vd_source=fc2e074d346648621ecd8ea61bc80073)|[节点介绍文档](https://kfecan834o.feishu.cn/wiki/Eeyuw2rDiisTVkk30GRcHsmBnld?from=from_copylink)
+## 📦 安装
 
-## 🚀 特色和节点介绍：
-- Comfyui PDuse 制作是方便处理一些 常用的图像 json 和txt 各种繁琐python操作集成到comfyui节点里面，后续有空会持续维护。
-- 
-  
-## ⚡ 安装方法
-
-#### 方法一：Git克隆
+1. 克隆仓库到ComfyUI的custom_nodes目录：
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/your-username/Comfyui_PDuse.git
+git clone https://github.com/your-repo/Comfyui_PDuse.git
+```
+
+2. 安装依赖：
+```bash
 cd Comfyui_PDuse
 pip install -r requirements.txt
 ```
 
-#### 方法二：手动下载
-1. 从releases下载ZIP文件 or 网盘 PD源代码备份：https://pan.quark.cn/s/ac4cf8544857#/list/share
-2. 解压到`ComfyUI/custom_nodes/`
-3. 安装依赖：`pip install -r requirements.txt`
-   
+3. 重启ComfyUI
 
-## 📖 节点说明
+## 📋 依赖项
 
-### text处理
-
-##### PD Show Text
-> 文本显示节点，用于在ComfyUI界面中显示文本信息，通常用于显示处理结果、状态报告或调试信息。
-
-- text：要显示的文本内容（支持来自其他节点的文本输出）
-
-**功能特点：**
-- ✅ 在工作流中实时显示文本信息
-- ✅ 支持显示处理结果和状态报告
-- ✅ 可用于调试和监控节点执行状态
-- ✅ 支持多行文本显示
-- ✅ 自动保存到工作流信息中
-
-**使用场景：**
-- 显示文件处理统计信息
-- 显示错误信息和警告
-- 监控批处理进度
-- 调试工作流执行状态
-
-##### PD:Image_and_Text
-![PD_Image_and_Text](img/PD_Image_and_Text.png)
-> 字体文件可以放入文件夹fonts 。
-> 将两张图片左右合并，并在底部添加文字标注的ComfyUI节点。
-
-- image1+ ​​​​image2 ：尽量要求同样尺寸，如果不同，会自动等比例缩放对齐
-- text1 + text2   ：支持中文，需字体文件包含中文编码，可输入如"效果图"："原图"之类
-- font_size​：小于20可能看不清，大于90可能超出画布
-- ​​padding_up​：文字​​上方​​的留白高度，10-30
-- ​​padding_down：文字​**​下方​**​的留白高度  10- 1000 ,可以往下扩多一些方便排版
-- font_file​  选择字体样式, 需将.ttf/.otf文件放入插件目录的fonts文件夹
-- longer_size ： 单张图的最长边尺寸限制
-##### PD_Text Overlay Node
-![PD_Text Overlay Node](img/PD_Text%20Overlay%20Node.png)
-> 给图片添加文字，并且指定位置贴上去。
-
-- image：要处理的输入图片
-- text：需要叠加的文字内容 
-- font_size：字体大小 
-- font_color：文字颜色，使用HEX格式，如#000000 
-- position_x：文字水平位置（0到1，0是左，1是右） 
-- position_y：文字垂直位置（0到1，0是上，1是下） 
-- letter_gap：字符间距（可为负数，负数使字母靠近）
-- font_name：使用的字体文件名（从fonts目录中选择）
-
-##### PD_Add Label
-> 在图像四边添加标签文字，支持百分比定位和多方向添加。
-
-- 位置控制: text_x(1-100) 和 text_y(1-100) 百分比定位
-- 标签尺寸: height(1-1000) 控制标签区域大小
-- 文字样式: font_size(8-200) 和 font 选择
-- 颜色模式:
-  - light = 白底黑字
-  - dark = 黑底白字
-- 添加方向: up/down/left/right 四个方向
-
-##### PD:imageconcante_V1
-![PDimageconcante_V1](img/PDimageconcante_V1.png)
-> 两张图片按指定方向拼接合并。
-
-- image1：输入图片1（必填）
-- image2：输入图片2（可选，不填时只输出image1）
-- direction：合并方向（right/down/left/up）
-- match_size：尺寸对齐方式（longest/crop by image1）
-- image2_crop：裁切位置（center/top/bottom/left/right）
-### image处理
-
-##### PDIMAGE:Load_Images
-![PD_Load_Images](img/PD_Load_Images.png)
-> 批量图片加载节点，从指定目录中加载多张图片，支持多种加载选项和缓存控制。
-
-- directory：图片文件夹路径（必填）
-- image_load_cap：加载数量限制（0为无限制）
-- start_index：起始索引（从第几张开始加载）
-- load_always：强制重新加载（True时忽略缓存）
-
-##### PDIMAGE_SAVE_PATH
-![PDIMAGE_SAVE_PATH](img/PDIMAGE_SAVE_PATH.png)
-> 图片保存路径管理节点，设置和管理图片的保存路径，支持自定义文件名格式。
-
-- save_path：保存路径设置
-- filename_format：文件名格式（支持前缀、后缀）
-- create_subdirs：是否创建子目录
-
-##### PDIMAGE_SAVE_PATHV2
-![PDIMAGE_SAVE_PATHV2](img/PDIMAGE_SAVE_PATHV2.png)
-> 增强版图片保存路径管理节点，支持多种图片格式、时间令牌和智能文件命名。
-
-- filename_prefix：文件名前缀（支持时间令牌）
-- custom_output_dir：自定义输出目录路径
-- filename_delimiter：文件名分隔符
-- filename_number_padding：数字填充位数
-- extension：文件格式选择
-- quality：图像质量控制（1-100）
-- embed_metadata：元数据嵌入控制
-- overwrite_mode：覆盖模式选择
-
-##### PD:Image Blend V1
-![PDImage_Blend V1](img/PDImage_Blend%20V1%20.png)
-> 将两张图片进行混合，支持多种混合模式、透明度控制和位置调整。
-- background_image：背景图像（必填）
-- layer_image：图层图像（必填）
-- blend_mode：混合模式（normal/multiply/screen/overlay等）
-- opacity：透明度（0-100）
-- x_percent/y_percent：位置百分比（50为居中）
-- scale：缩放比例（0.01到10）
-- align_mode：对齐模式
-- layer_mask：可选图层遮罩
-- invert_mask：是否反转遮罩
-
-##### PD:Image Ratio Crop
-![Image Ratio Crop](img/Image%20Ratio%20Crop.png)
-> 根据指定比例和最长边长度进行中心裁切，支持自定义比例和输出尺寸。
-
-- image：输入图像张量
-- ratio_a：比例A（1-100）
-- ratio_b：比例B（1-100）
-- max_size：输出图像的最长边长度
-
-##### PD:longgersize
-![longgersize](img/longgersize.png)
-> 将图像的长边缩放到指定尺寸，同时保持宽高比，短边按比例缩放。
-
-- image：输入图像
-- size：目标长边尺寸
-- interpolation：插值方式
-
-##### PD:image_resize_v1
-![image_resize_v1](img/image_resize_v1.png)
-> 图片缩放节点，支持通过最长边或最短边缩放图片，输出缩放后的图片和mask。
-
-- pixels：输入图片张量
-- resize_mode：缩放模式（longest/shortest）
-- target_size：目标尺寸（64-8192）
-- mask_optional：可选的mask输入
-
-##### PD:imagesize_v2
-![PD：imagesize_v2](img/PD：imagesize_v2.png)
-> 图片缩放裁切节点V2，支持三种处理模式：纯缩放、比例裁切、强制拉伸。
-
-- pixels：输入图片张量
-- resize_mode：缩放模式（longest/shortest）
-- target_size：目标尺寸（64-8192）
-- crop_mode：裁切模式（none/crop/stretch）
-- ratio_a/ratio_b：目标比例（1-100）
-- horizontal_align：水平对齐方式
-- vertical_align：垂直对齐方式
-- mask_optional：可选的mask输入
-
-##### PD_image ratiosize
-![PD_image ratiosize](img/PD_image%20ratiosize.png)
-> 基于最长边的智能分辨率计算节点，根据宽高比和最长边尺寸自动计算图像分辨率，特别适合AI图像生成工作流。
-
-- max_dimension：最长边尺寸（256-4096，默认1024）
-- aspect_ratio：宽高比选择（3:4竖向、4:3横向、1:1正方形）
-- divisible_by：整除要求（8/16/32/64，默认64）
-
-**功能特点：**
-- ✅ 基于最长边计算，符合用户习惯
-- ✅ 确保分辨率能被64整除，AI模型友好
-- ✅ 提供直观的预览图像显示
-- ✅ 支持多种常用宽高比
-- ✅ 输出整数值，可直接连接其他节点
-
-**计算示例：**
-- 3:4比例 + 1024最长边 → 768×1024
-- 4:3比例 + 1024最长边 → 1024×768  
-- 1:1比例 + 1024最长边 → 1024×1024
-
-**输出内容：**
-- width：计算出的宽度（INT）
-- height：计算出的高度（INT）
-- resolution：分辨率字符串（如"768 x 1024"）
-- preview：预览图像（显示计算结果）
-
-##### PD_CropBorder
-![PD_CropBorder](img/PDimage_cropborder.png)
-> 智能图像边框裁切节点，自动检测并移除图片边缘的黑色或白色边框。
-
-- image：输入图像张量
-- border_color：要移除的边框颜色（black/white）
-- threshold：颜色检测阈值（0-255）
-- padding：裁切后保留的边距像素（0-100）
-
-##### PD_BatchCropBlackBorder
-![PD_BatchCropBlackBorder](img/PDimage_cropborderbach.png)
-> 批量图像边框裁切节点，批量处理文件夹中的所有图片，自动检测并移除边框。
-
-- input_path：输入图片文件夹路径（必填）
-- border_color：要移除的边框颜色（black/white）
-- threshold：颜色检测阈值（0-255）
-- padding：裁切后保留的边距像素（0-100）
-- output_path：输出路径（可选，不填则覆盖原图）
-
-##### PD:remove_background
-> 智能背景移除节点，去除图像中的黑色背景，输出原图和透明度掩码，支持阈值调节和边缘平滑。
-
-- image：输入图像张量（必填）
-- threshold：黑色检测阈值（0.0-1.0，默认0.9）
-- smooth_edges：是否平滑边缘（可选，默认True）
-- invert_mask：是否反转掩码（可选，默认True）
-
-**输出：**
-- image：原始图像（保持输入尺寸不变）
-- mask：透明度掩码（白色=保留区域，黑色=透明区域）
-
-
-##### PDJSON_Group
-![PDJSON_Group节点界面](img/PDJSON_Group.png)
-> JSON文件输出路径和格式设置节点。
-
-- directory_path：JSON文件输出目录路径
-- color_choice：颜色选择
-- modify_size：尺寸修改选项
-- font_size：字体大小
-- target_title：目标标题
-- output_folder：输出文件夹
-- new_filename：新文件名
-
-### 文件处理
-
-##### PD:number_start
-
-> 文件排序重命名节点，将"T_1", "T_2", "T_3"格式的文件名重命名为"1_T", "2_T", "3_T"，T参数可以自定义为其他单词，直接执行重命名操作。
-
-- folder_path：目标文件夹路径（必填）
-- target_prefix：目标前缀词（默认为"T"，可自定义为其他单词）
-
-**功能特点：**
-- ✅ 智能识别 `前缀_数字` 格式的文件名
-- ✅ 按数字顺序重命名，保持正确排序  
-- ✅ 支持任意文件扩展名 (.jpg, .png, .txt 等)
-- ✅ 详细的操作报告，包含成功/失败/跳过的文件统计
-- ✅ 错误处理，避免覆盖已存在的文件
-
-**使用示例：**
-- 输入文件：`T_1.jpg`, `T_2.png`, `T_10.txt`
-- 输出文件：`1_T.jpg`, `2_T.png`, `10_T.txt`
-
-##### PD:replace_word
-> 文件名关键词替换/删除节点，在文件夹中查找包含指定关键词的文件，将关键词替换为新的关键词或删除关键词。支持格式筛选，严格匹配（区分大小写）。
-
-- folder_path：目标文件夹路径（必填）
-- old_keyword：要替换/删除的关键词（默认为"R"）
-- new_keyword：新的关键词（默认为"start"，留空则删除关键词）
-- file_format：文件格式筛选（默认为"full"不限制，可选：jpg/png/txt/jpeg/bmp/gif/webp）
-
-**功能特点：**
-- ✅ 智能检索包含指定关键词的文件
-- ✅ 严格匹配模式，只替换完全一致的关键词（区分大小写）
-- ✅ 支持关键词替换和删除两种操作模式
-- ✅ 支持格式筛选，可指定只处理特定格式的文件
-- ✅ 详细的操作报告，包含成功/失败/跳过的文件统计
-- ✅ 错误处理，避免覆盖已存在的文件
-- ✅ 自动跳过无需更改的文件
-
-**使用示例：**
-- 原文件：`1_R.jpg`, `2_R.png`, `test_R.txt`
-- 设置：old_keyword="R", new_keyword="start", file_format="full"
-- 结果文件：`1_start.jpg`, `2_start.png`, `test_start.txt`
-
-**格式筛选示例：**
-- 原文件：`1_R.jpg`, `2_R.png`, `test_R.txt`
-- 设置：old_keyword="R", new_keyword="start", file_format="jpg"
-- 结果文件：`1_start.jpg`（只处理jpg文件）, `2_R.png`, `test_R.txt`（png和txt文件被跳过）
-
-**关键词删除示例：**
-- 原文件：`1_temp.jpg`, `2_temp.png`, `test_temp.txt`
-- 设置：old_keyword="temp", new_keyword=""（留空）, file_format="full"
-- 结果文件：`1_.jpg`, `2_.png`, `test_.txt`（删除temp关键词）
-
-##### PD-Excel
-![PD-Excel](img/PD-Excel.png)
-> Excel数据处理节点，用于在ComfyUI中处理Excel文件数据，支持读取、写入和数据转换操作。
-
-- excel_file：Excel文件路径（必填）
-- sheet_name：工作表名称（可选，默认为第一个工作表）
-- operation：操作类型（read/write/convert）
-
-**功能特点：**
-- ✅ 支持Excel文件的读取和写入操作
-- ✅ 支持多种数据格式转换
-- ✅ 支持工作表选择和数据筛选
-- ✅ 提供详细的数据处理报告
-- ✅ 支持批量数据处理
-
-**使用场景：**
-- 处理图像标注数据
-- 批量文件信息整理
-- 数据统计和报表生成
-- 工作流参数配置管理
+```
+xlrd
+openpyxl
+scipy
+numpy
+Pillow
+torch
+torchvision
+opencv-python
+```
 
 ---
-## 🎯 应用工作流：workflow
 
-在img目录下有json格式的工作流示例文件，示范了如何在ComfyUI中使用这些节点。
+## 🎬 节点列表
 
-**批量打标：**
+### 1. PD:Image FengMian Wipe
 
-[批量反推工具_V9.1-简易版工作流](img/批量反推工具_V9.1-简易版.json)
+创建两张图片之间的擦除过渡动画效果。
+
+#### 输入参数
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `top_image` | IMAGE | - | - | 上层图像（被擦除） |
+| `bottom_image` | IMAGE | - | - | 底层图像（被显示） |
+| `num_frames` | INT | 30 | 2-600 | 过渡帧数 |
+| `angle_deg` | FLOAT | 0 | -180~180 | 擦除角度（0=水平） |
+| `smooth_width` | INT | 20 | 0-4096 | 渐变带宽度（0=硬边） |
+| `edge_sharpness` | FLOAT | 2.0 | 0.1-10.0 | 边缘锐化程度 |
+| `edge_line_width` | FLOAT | 0.0 | 0-10.0 | 边缘线粗细（0=无线） |
+| `edge_line_color` | STRING | "#ffffff" | 十六进制 | 边缘线颜色 |
+| `reverse` | BOOLEAN | False | - | 是否反向擦除 |
+| `liner_image` | IMAGE (可选) | - | - | 边缘线图标 |
+| `liner_image_mask` | MASK (可选) | - | - | 图标遮罩 |
+
+#### 输出
+
+| 输出 | 类型 | 说明 |
+|------|------|------|
+| `frames` | IMAGE | 过渡帧序列 |
+
+#### 基础使用
+
+```
+[Load Image: 图片A] → top_image
+[Load Image: 图片B] → bottom_image
+    ↓
+[PD:Image FengMian Wipe]
+- num_frames: 30
+- angle_deg: 0 (水平滑动)
+- smooth_width: 40
+    ↓
+frames → [后续处理节点]
+```
+
+---
+
+### 📐 核心参数详解
+
+#### 1. angle_deg（擦除角度）
+
+控制擦除线的方向：
+
+| 角度 | 方向 | 效果 |
+|------|------|------|
+| 0° | 水平 | 从左到右 →  |
+| 90° | 垂直 | 从上到下 ↓ |
+| 45° | 斜向 | 从左上到右下 ↘ |
+| -45° | 斜向 | 从左下到右上 ↗ |
+
+#### 2. smooth_width（渐变宽度）
+
+控制过渡边缘的柔和程度：
+
+| 值 | 效果 | 适用场景 |
+|----|------|---------|
+| 0 | 硬边，瞬间切换 | 数字效果、故障风格 |
+| 20-50 | 柔和过渡 | 通用场景 ⭐ |
+| 100+ | 非常柔和 | 梦幻、柔焦效果 |
+
+#### 3. edge_sharpness（边缘锐化）
+
+控制过渡边缘的清晰度：
+
+| 值 | 效果 | 特点 |
+|----|------|------|
+| 0.5 | 非常柔和 | 边缘模糊，渐变很宽 |
+| 1.0 | 线性过渡 | 标准平滑过渡 |
+| 2.0 | 中等锐化 | 推荐值 ⭐ |
+| 5.0+ | 非常锐利 | 边缘明显，类似硬边 |
+
+**工作原理**：使用幂函数 `alpha^(1/sharpness)` 对过渡曲线进行非线性变换。
+
+---
+
+### 🎨 边缘线功能
+
+#### edge_line_width（边缘线宽度）
+
+在过渡边缘中心添加一条彩色线：
+
+| 值 | 效果 |
+|----|------|
+| 0 | 无边缘线 |
+| 0.5-1.0 | 细线，精致 |
+| 2.0-3.0 | 中等粗细 ⭐ |
+| 5.0+ | 粗线，醒目 |
+
+**支持小数精度**：可以设置 `0.5`, `1.5`, `2.5` 等值。
+
+#### edge_line_color（边缘线颜色）
+
+使用十六进制颜色值：
+
+**常用颜色**：
+```
+白色: #ffffff (默认)
+黑色: #000000 或 #000
+红色: #ff0000 或 #f00
+蓝色: #0078ff (科技蓝)
+金色: #ffd700
+绿色: #00ff00 或 #0f0
+```
+
+**支持格式**：
+- 6位: `#ffffff` (推荐)
+- 3位简写: `#fff`
+- 可省略#号: `ffffff`
+
+---
+
+### 🖼️ 边缘线图标功能
+
+在边缘线上叠加跟随移动的图标（logo、箭头等）。
+
+#### 使用方法
+
+```
+[Load Image: Logo.png] → liner_image
+[Image to Mask: Logo] → liner_image_mask
+    ↓
+[PD:Image FengMian Wipe]
+→ 图标会跟随边缘线移动
+```
+
+#### 图标要求
+
+- **格式**: PNG（支持透明度）
+- **尺寸建议**:
+  - 1080p: 50-150px
+  - 4K: 100-300px
+  - 推荐：画面短边的 1/10 - 1/15
+- **设计原则**:
+  - 简洁明了
+  - 轮廓清晰
+  - 对比度高
+  - 圆形或方形
+
+#### 特性
+
+- ✅ 自动跟随边缘线移动
+- ✅ 居中对齐到边缘中心
+- ✅ 使用mask实现平滑透明
+- ✅ 自动处理边界裁剪
+- ✅ 可选功能（不连接则不显示）
+
+---
+
+### 🎯 应用场景
+
+#### 场景1: 产品对比
+
+```
+参数设置:
+- num_frames: 40
+- angle_deg: 0 (水平)
+- smooth_width: 50
+- edge_sharpness: 2.5
+- edge_line_width: 3.0
+- edge_line_color: "#0078ff"
+
+连接公司logo到liner_image
+→ 专业的产品对比动画
+```
+
+#### 场景2: 前后对比
+
+```
+参数设置:
+- num_frames: 30
+- angle_deg: 90 (垂直)
+- smooth_width: 40
+- edge_sharpness: 2.0
+- edge_line_width: 2.0
+- edge_line_color: "#ffd700"
+
+→ 展示修图前后效果
+```
+
+#### 场景3: 时间线展示
+
+```
+参数设置:
+- num_frames: 50
+- angle_deg: 45 (斜向)
+- smooth_width: 60
+- edge_sharpness: 1.5
+- edge_line_width: 0 (无线)
+
+→ 平滑的时间变化展示
+```
+
+#### 场景4: 品牌推广
+
+```
+参数设置:
+- num_frames: 35
+- angle_deg: 0
+- smooth_width: 45
+- edge_line_width: 4.0
+- edge_line_color: [品牌色]
+- liner_image: [品牌Logo]
+
+→ 带品牌标识的过渡动画
+```
+
+---
+
+### 💡 使用技巧
+
+#### 技巧1: 颜色搭配
+
+```
+深色图片 → 使用亮色线:
+#ffffff (白), #ffd700 (金), #00ffff (青)
+
+亮色图片 → 使用深色线:
+#000000 (黑), #0078ff (深蓝), #8a2be2 (紫)
+
+暖色调 → 使用暖色线:
+#ffd700 (金), #ff8c00 (橙), #ff0000 (红)
+
+冷色调 → 使用冷色线:
+#0078ff (蓝), #00ffff (青), #8a2be2 (紫)
+```
+
+#### 技巧2: 参数组合
+
+**平滑柔和**:
+```
+smooth_width: 60-100
+edge_sharpness: 1.0-1.5
+edge_line_width: 0
+```
+
+**清晰醒目**:
+```
+smooth_width: 30-40
+edge_sharpness: 3.0-5.0
+edge_line_width: 3.0-5.0
+```
+
+**专业商务**:
+```
+smooth_width: 40-50
+edge_sharpness: 2.0-2.5
+edge_line_width: 2.0-3.0
+edge_line_color: "#0078ff"
++ 公司Logo
+```
+
+#### 技巧3: 图标设计
+
+```
+简洁图标 + 细线 (1.0-2.0):
+→ 精致、专业
+
+中等图标 + 中线 (2.0-3.0):
+→ 平衡、协调 ⭐
+
+大图标 + 粗线 (5.0+):
+→ 醒目、强烈
+```
+
+#### 技巧4: 角度选择
+
+```
+产品对比: 0° (水平)
+时间轴: 0° 或 90° (垂直)
+创意效果: 45° 或 -45° (斜向)
+环绕效果: 可制作多个角度合成
+```
+
+---
+
+### 🔧 技术细节
+
+#### 边缘锐化算法
+
+```python
+# 使用幂函数实现非线性过渡
+alpha_centered = alpha * 2.0 - 1.0  # [0,1] → [-1,1]
+alpha_sharpened = sign(alpha_centered) * |alpha_centered|^(1/sharpness)
+alpha = (alpha_sharpened + 1.0) / 2.0  # [-1,1] → [0,1]
+```
+
+#### 边缘线绘制
+
+```python
+# 计算距离边缘中心的距离
+distance_from_edge = |alpha - 0.5| * smooth_width
+
+# 判断是否在线宽范围内
+if distance_from_edge <= edge_line_width / 2:
+    # 混合边缘线颜色
+    frame = frame * (1 - line_mask) + line_color * line_mask
+```
+
+#### 图标定位
+
+```python
+# 1. 找到边缘中心线 (alpha ≈ 0.5)
+center_mask = |alpha - 0.5| < 0.01
+
+# 2. 计算质心
+center_y = mean(center_pixels_y)
+center_x = mean(center_pixels_x)
+
+# 3. 居中放置图标
+start_y = center_y - icon_height / 2
+start_x = center_x - icon_width / 2
+
+# 4. Alpha混合
+blended = background * (1 - mask) + icon * mask
+```
+
+---
+
+### 🎬 完整工作流示例
+
+#### 示例1: 带Logo的产品对比
+
+```
+工作流:
+[Load Image: 产品旧版.png] → top_image
+[Load Image: 产品新版.png] → bottom_image
+[Load Image: 公司Logo.png] → liner_image
+[Image to Mask: Logo] → liner_image_mask
+    ↓
+[PD:Image FengMian Wipe]
+- num_frames: 40
+- angle_deg: 0
+- smooth_width: 45
+- edge_sharpness: 2.5
+- edge_line_width: 3.0
+- edge_line_color: "#0078ff"
+- liner_image: 已连接
+- liner_image_mask: 已连接
+    ↓ frames
+[PD:Image List To Gif/Video]
+- format: "mp4"
+- frame_rate: 24
+    ↓
+专业产品对比视频！
+```
+
+#### 示例2: 简洁过渡动画
+
+```
+工作流:
+[Load Image: 图A] → top_image
+[Load Image: 图B] → bottom_image
+    ↓
+[PD:Image FengMian Wipe]
+- num_frames: 30
+- angle_deg: 90
+- smooth_width: 40
+- edge_sharpness: 2.0
+- edge_line_width: 2.0
+- edge_line_color: "#ffffff"
+    ↓ frames
+[Save Image]
+或
+[PD:Image List To Gif/Video]
+```
+
+---
+
+## 🎥 PD:Image List To Gif/Video
+
+将图像序列转换为GIF、WebP或MP4格式。
+
+### 输入参数
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `images` | IMAGE | - | - | 图像序列输入 |
+| `frame_rate` | FLOAT | 8.0 | 1.0-60.0 | 帧率（fps） |
+| `loop_count` | INT | 0 | 0-100 | 循环次数（0=无限，仅GIF/WebP） |
+| `filename_prefix` | STRING | "FengMian" | - | 文件名前缀 |
+| `output_folder` | STRING | "imagefengmian_gif" | - | 输出目录 |
+| `format` | STRING | "gif" | gif/webp/mp4 | 输出格式 ⭐ |
+| `pingpong` | BOOLEAN | False | - | 来回播放效果 |
+| `save_output` | BOOLEAN | True | - | 是否保存文件 |
+
+### 输出
+
+| 输出 | 类型 | 说明 |
+|------|------|------|
+| `filepath` | STRING | 保存的文件路径 |
+
+**前端预览**: 支持GIF/WebP/MP4的实时预览显示
+
+---
+
+### 📊 格式对比
+
+| 格式 | 文件大小 | 颜色质量 | 播放控件 | 兼容性 | 推荐场景 |
+|------|---------|---------|---------|--------|---------|
+| **GIF** | ❌ 大 | ❌ 256色 | ❌ 无 | ✅ 最好 | 简单动画 |
+| **WebP** | ✅ 小 | ✅ 全彩 | ❌ 无 | ⚠️ 现代 | 质量动画 |
+| **MP4** 🆕 | **✅ 最小** | **✅ 全彩** | **✅ 有** | **✅ 好** | **专业视频** ⭐ |
+
+### MP4的优势
+
+#### vs GIF
+```
+文件大小: MP4约为GIF的 1/10
+颜色数: 1600万色 vs 256色
+画质: 高质量 vs 有损压缩
+控件: 有播放控件 vs 无
+```
+
+#### vs WebP
+```
+文件大小: MP4更小
+兼容性: MP4更广泛
+编辑工具: MP4工具更多
+播放控件: MP4有完整控件
+```
+
+---
+
+### 🎨 参数详解
+
+#### format（输出格式）
+
+**GIF格式**:
+```
+特点:
+- 兼容性最好
+- 文件较大
+- 256色限制
+- 自动循环
+
+适用:
+- 简单图形动画
+- 表情包
+- 需要广泛兼容的场景
+```
+
+**WebP格式**:
+```
+特点:
+- 文件较小
+- 全彩支持
+- 质量较好
+- 需要现代浏览器
+
+适用:
+- 网页动画
+- 高质量要求
+- 现代平台
+```
+
+**MP4格式** 🆕:
+```
+特点:
+- 文件最小
+- 全彩高质量
+- 有播放控件
+- 广泛支持
+
+适用:
+- 专业视频制作 ⭐
+- 产品展示
+- 教学演示
+- 需要播放控件的场景
+```
+
+#### frame_rate（帧率）
+
+| 帧率 | 效果 | 文件大小 | 适用场景 |
+|------|------|---------|---------|
+| 8-12 | GIF风格 | 最小 | 简单循环动画 |
+| **24** | **电影感** | 中等 | **推荐** ⭐ |
+| 30 | 流畅 | 较大 | 产品展示 |
+| 60 | 超流畅 | 大 | 游戏录屏 |
+
+#### pingpong（来回播放）
+
+```
+False (默认):
+A → B → C → D (结束/循环)
+- 单向播放
+- 文件较小
+
+True:
+A → B → C → D → C → B → A (循环)
+- 来回播放效果
+- 帧数翻倍
+- 适合循环展示
+```
+
+---
+
+### 💡 使用建议
+
+#### 推荐组合1: 专业视频输出
+
+```
+format: "mp4"
+frame_rate: 24
+pingpong: False
+
+= 文件小 + 质量高 + 专业感
+```
+
+#### 推荐组合2: 网页动画
+
+```
+format: "webp"
+frame_rate: 15
+pingpong: True
+
+= 循环流畅 + 文件可控
+```
+
+#### 推荐组合3: 快速预览
+
+```
+format: "gif"
+frame_rate: 10
+pingpong: False
+
+= 快速生成 + 兼容性好
+```
+
+---
+
+### 🎬 完整工作流
+
+#### 工作流: 产品展示视频
+
+```
+[Load Image: 图A] ──┐
+[Load Image: 图B] ──┤
+[Load Image: 图C] ──┼→ [PD:Image FengMian Wipe]
+                    - num_frames: 30
+                    - angle_deg: 0
+                    - smooth_width: 40
+                    - edge_line_width: 2.0
+                    - edge_line_color: "#0078ff"
+                        ↓ frames (90帧)
+                    [PD:Image List To Gif/Video]
+                    - format: "mp4" ⭐
+                    - frame_rate: 24
+                    - filename_prefix: "product_demo"
+                        ↓
+                    product_demo_0001.mp4
+                    (约2-5MB，高质量)
+```
+
+#### 工作流: GIF表情包
+
+```
+[Load Images] → images
+    ↓
+[PD:Image List To Gif/Video]
+- format: "gif"
+- frame_rate: 10
+- pingpong: True
+- loop_count: 0
+    ↓
+有趣的循环GIF
+```
+
+---
+
+### 🔧 MP4技术细节
+
+#### 视频编码
+
+```python
+# 优先使用H.264编码（最兼容）
+fourcc_options = [
+    'avc1',  # H.264 (优先)
+    'mp4v',  # MPEG-4 (备用)
+]
+
+# 自动选择可用编码器
+for fourcc in fourcc_options:
+    video_writer = cv2.VideoWriter(...)
+    if video_writer.isOpened():
+        break
+```
+
+#### 前端预览
+
+```javascript
+// 自动检测格式
+if (format.startsWith('video/')) {
+    // 使用 <video> 标签
+    element = document.createElement("video");
+    element.controls = true;
+    element.loop = true;
+} else {
+    // 使用 <img> 标签
+    element = document.createElement("img");
+}
+```
+
+---
+
+### 📝 文件大小估算
+
+#### 示例: 1920x1080分辨率
+
+| 格式 | 30帧 | 60帧 | 对比 |
+|------|------|------|------|
+| GIF | ~30MB | ~60MB | 基准 |
+| WebP | ~8MB | ~16MB | 减少73% |
+| **MP4** | **~3MB** | **~6MB** | **减少90%** ✅ |
+
+---
+
+### ⚠️ 注意事项
+
+#### 1. loop_count对MP4无效
+
+```
+loop_count参数仅对GIF/WebP有效
+MP4的循环由播放器控制
+前端预览已默认设置循环播放
+```
+
+#### 2. OpenCV依赖
+
+```
+需要安装: opencv-python
+
+检查是否已安装:
+pip show opencv-python
+
+如未安装:
+pip install opencv-python
+```
+
+#### 3. 编码器支持
+
+```
+Windows: 通常内置编码器
+Linux: 可能需要安装 ffmpeg
+MacOS: 通常支持良好
+
+如遇编码错误:
+sudo apt-get install ffmpeg  # Linux
+brew install ffmpeg          # MacOS
+```
+
+#### 4. 文件路径
+
+```
+输出路径:
+ComfyUI/output/{output_folder}/{filename}.{ext}
+
+示例:
+output_folder = "my_videos"
+filename_prefix = "demo"
+→ ComfyUI/output/my_videos/demo_0001.mp4
+```
+
+---
+
+### 🎯 快速开始
+
+#### 最简单的MP4输出
+
+```
+[任意图像序列] → images
+    ↓
+[PD:Image List To Gif/Video]
+- format: "mp4"
+- frame_rate: 24
+- 其他保持默认
+    ↓
+点击执行！
+```
+
+#### 最简单的GIF输出
+
+```
+[任意图像序列] → images
+    ↓
+[PD:Image List To Gif/Video]
+- format: "gif"
+- frame_rate: 10
+- pingpong: True
+    ↓
+循环GIF完成！
+```
+
+---
+
+## 🚀 快速开始示例
+
+### 示例1: 基础图片过渡
+
+```
+1. 添加两个 [Load Image] 节点
+2. 添加 [PD:Image FengMian Wipe]
+3. 连接图片到 top_image 和 bottom_image
+4. 保持默认参数
+5. 连接 frames 到 [Save Image]
+6. 执行！
+```
+
+### 示例2: 带品牌Logo的视频
+
+```
+1. 准备：产品图A、产品图B、公司Logo.png
+2. 添加 [PD:Image FengMian Wipe]
+3. 设置参数：
+   - edge_line_width: 3.0
+   - edge_line_color: "#0078ff"
+4. 连接Logo和Mask
+5. 连接到 [PD:Image List To Gif/Video]
+6. 设置 format: "mp4"
+7. 执行获得专业视频！
+```
+
+### 示例3: 快速GIF动画
+
+```
+1. 添加 [Load Images] (批量加载)
+2. 连接到 [PD:Image List To Gif/Video]
+3. 设置：
+   - format: "gif"
+   - frame_rate: 10
+   - pingpong: True
+4. 执行获得循环GIF！
+```
+
+---
+
+## 📚 完整参数速查表
+
+### PD:Image FengMian Wipe
+
+| 参数 | 推荐值 | 说明 |
+|------|--------|------|
+| num_frames | 30-40 | 过渡帧数 |
+| angle_deg | 0, 90, 45 | 擦除角度 |
+| smooth_width | 40-50 | 渐变宽度 |
+| edge_sharpness | 2.0-2.5 | 边缘锐化 |
+| edge_line_width | 2.0-3.0 | 边缘线粗细 |
+| edge_line_color | "#0078ff" | 蓝色（推荐） |
+
+### PD:Image List To Gif/Video
+
+| 参数 | GIF | WebP | MP4 |
+|------|-----|------|-----|
+| format | "gif" | "webp" | "mp4" ⭐ |
+| frame_rate | 10 | 15 | 24 |
+| loop_count | 0 | 0 | (无效) |
+| pingpong | True | False | False |
+
+---
+
+## 💡 最佳实践
+
+### 1. 性能优化
+
+```
+大尺寸图片:
+- 先降低分辨率
+- 使用MP4格式
+- 帧率不超过30
+
+小文件需求:
+- 使用MP4格式
+- 降低帧率到15-20
+- 减少帧数
+```
+
+### 2. 质量优化
+
+```
+高质量需求:
+- 使用MP4格式
+- 帧率24-30
+- 保持原始分辨率
+- edge_sharpness: 2.0-3.0
+```
+
+### 3. 品牌化建议
+
+```
+专业演示:
+- 使用品牌色作为边缘线颜色
+- 添加公司Logo到liner_image
+- 使用MP4格式输出
+- 帧率: 24fps
+```
+
+---
+
+## 🐛 常见问题
+
+### Q: 边缘线看不见？
+
+**A**: 检查 `edge_line_width` 是否大于0，以及 `smooth_width` 是否也大于0（边缘线需要在渐变带内）。
+
+### Q: 图标不显示？
+
+**A**: 确保同时连接了 `liner_image` 和 `liner_image_mask`，两者缺一不可。
+
+### Q: MP4无法生成？
+
+**A**: 
+1. 检查是否安装了 opencv-python
+2. Linux/Mac可能需要安装ffmpeg
+3. 查看终端日志的错误信息
+
+### Q: 文件太大？
+
+**A**:
+- GIF → 使用WebP或MP4
+- 降低帧率: 30 → 24 → 15
+- 减少帧数
+- 降低分辨率
+
+### Q: 预览不显示？
+
+**A**:
+1. 重启ComfyUI
+2. 清除浏览器缓存 (Ctrl+Shift+Del)
+3. 检查浏览器控制台(F12)的错误
+
+---
+
+## 🎓 学习资源
+
+### 推荐参数组合
+
+**新手入门**:
+```
+num_frames: 30
+angle_deg: 0
+smooth_width: 40
+edge_sharpness: 2.0
+edge_line_width: 0
+format: "gif"
+frame_rate: 10
+```
+
+**专业制作**:
+```
+num_frames: 40
+angle_deg: 0
+smooth_width: 45
+edge_sharpness: 2.5
+edge_line_width: 3.0
+edge_line_color: "#0078ff"
++ Logo图标
+format: "mp4"
+frame_rate: 24
+```
+
+**创意实验**:
+```
+num_frames: 50
+angle_deg: 45
+smooth_width: 60
+edge_sharpness: 1.5
+edge_line_width: 5.0
+edge_line_color: "#ff00ff"
+format: "webp"
+frame_rate: 20
+pingpong: True
+```
+
+---
+
+## 📄 许可证
+
+[在此添加您的许可证信息]
+
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request！
+
+## 📮 联系方式
+
+[在此添加您的联系方式]
+
+---
+
+**版本**: v3.2
+**更新日期**: 2025-11-15
+**ComfyUI兼容性**: 最新版本
+
+**主要特性**:
+- ✅ 图像擦除过渡动画
+- ✅ 可调节边缘锐化和柔和度
+- ✅ 彩色边缘线（十六进制颜色）
+- ✅ 边缘线图标叠加
+- ✅ GIF/WebP/MP4多格式输出
+- ✅ 前端实时预览（含视频播放）
+- ✅ 完全中文文档支持
+
+**推荐配置**: 边缘线 + Logo + MP4输出 ⭐

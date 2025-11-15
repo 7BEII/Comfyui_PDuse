@@ -37,7 +37,7 @@ class PD_RemoveBlackBackground:
     RETURN_TYPES = ("IMAGE", "MASK")  # 返回原图像和掩码
     RETURN_NAMES = ("image", "mask")  # 返回值的名称
     FUNCTION = "remove_black_background"  # 指定执行的方法名称
-    CATEGORY = "PD_Image/Background"  # 定义节点的类别
+    CATEGORY = "PDuse/Image"  # 定义节点的类别
 
     def remove_black_background(self, image, threshold=0.9, smooth_edges=True, invert_mask=True):
         """

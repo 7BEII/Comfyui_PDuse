@@ -131,7 +131,7 @@ class ImageBlendV1:
     RETURN_TYPES = ("IMAGE", "MASK")
     RETURN_NAMES = ("image", "mask")
     FUNCTION = 'image_blend_v1'
-    CATEGORY = 'PD/ImageBlend'
+    CATEGORY = 'PDuse/Image'
 
     def image_blend_v1(self, background_image, layer_image, invert_mask, blend_mode, opacity, 
                       x_percent, y_percent, scale, align_mode, layer_mask=None):

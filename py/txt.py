@@ -16,7 +16,7 @@ class PD_RemoveColorWords:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("Result",)
     FUNCTION = "process_directory"
-    CATEGORY = "PD Custom Nodes"
+    CATEGORY = "PDuse/Text"
 
     def process_directory(self, directory_path, words_to_remove, words_to_add):
         try:
@@ -98,7 +98,7 @@ class Empty_Line:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "remove_empty_lines"
-    CATEGORY = "text/processing"
+    CATEGORY = "PDuse/Text"
 
     def remove_empty_lines(self, text):
         cleaned_text = re.sub(r'^[\r\n]+', '', text)

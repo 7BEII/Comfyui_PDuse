@@ -20,7 +20,7 @@ class Imagecombine2:
 
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "Imagecombine2"
-    CATEGORY = "ImageProcessing"
+    CATEGORY = "PDuse/Image"
 
     DESCRIPTION = """
     Concatenates image2 to image1 in the specified direction.

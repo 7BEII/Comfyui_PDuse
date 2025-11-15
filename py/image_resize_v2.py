@@ -5,7 +5,7 @@ from PIL import Image
 class PDImageResizeV2:
     """
     图片缩放裁切节点V2，支持：
-    1. 通过最长边或最短边缩放图片
+    1. 通过最长边、最短边、高度或宽度缩放图片
     2. 三种裁切模式：
        - none: 不改变比例，只缩放
        - crop: 按比例裁切后缩放
@@ -15,7 +15,7 @@ class PDImageResizeV2:
     """
     RETURN_TYPES = ("IMAGE", "MASK",)
     FUNCTION = "resize_and_crop"
-    CATEGORY = "PD/ImageProcessing"
+    CATEGORY = "PDuse/Image"
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -26,8 +26,8 @@ class PDImageResizeV2:
         return {
             "required": {
                 "pixels": ("IMAGE",),
-                "resize_mode": (["longest", "shortest"], {"default": "longest"}),
-                "target_size": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
+                "resize_mode": (["longest", "shortest", "height", "width"], {"default": "longest"}),
+                "target_size": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 1}),
                 "crop_mode": (["none", "crop", "stretch"], {"default": "none"}),
                 "ratio_a": ("INT", {"default": 1, "min": 1, "max": 100, "step": 1}),
                 "ratio_b": ("INT", {"default": 1, "min": 1, "max": 100, "step": 1}),
@@ -43,7 +43,7 @@ class PDImageResizeV2:
     def VALIDATE_INPUTS(cls, resize_mode, target_size, ratio_a, ratio_b, **_):
         """
         校验输入参数。
-        @param resize_mode {str} 缩放模式：longest 或 shortest
+        @param resize_mode {str} 缩放模式：longest、shortest、height 或 width
         @param target_size {int} 目标尺寸
         @param ratio_a {int} 比例A
         @param ratio_b {int} 比例B
@@ -60,7 +60,7 @@ class PDImageResizeV2:
         """
         按照指定模式缩放和裁切图片。
         @param pixels {Tensor} 输入图片，形状为 (B, H, W, C)
-        @param resize_mode {str} 缩放模式：longest 或 shortest
+        @param resize_mode {str} 缩放模式：longest、shortest、height 或 width
         @param target_size {int} 目标尺寸
         @param crop_mode {str} 裁切模式：none/crop/stretch
         @param ratio_a {int} 比例A
@@ -173,21 +173,36 @@ class PDImageResizeV2:
         缩放图像和mask。
         @param image {PIL.Image} 输入图像
         @param mask {PIL.Image|None} 输入mask
-        @param resize_mode {str} 缩放模式
+        @param resize_mode {str} 缩放模式：longest、shortest、height 或 width
         @param target_size {int} 目标尺寸
         @returns {tuple} (缩放后的图像, 缩放后的mask)
         """
         width, height = image.size
         
-        # 计算缩放因子
+        # 计算缩放因子和新尺寸
         if resize_mode == "shortest":
             scale_factor = float(target_size) / min(height, width)
-        else:  # longest
+            new_width = int(width * scale_factor)
+            new_height = int(height * scale_factor)
+        elif resize_mode == "longest":
             scale_factor = float(target_size) / max(height, width)
-        
-        # 计算新尺寸
-        new_width = int(width * scale_factor)
-        new_height = int(height * scale_factor)
+            new_width = int(width * scale_factor)
+            new_height = int(height * scale_factor)
+        elif resize_mode == "height":
+            # 固定高度，等比例缩放宽度
+            scale_factor = float(target_size) / height
+            new_height = target_size
+            new_width = int(width * scale_factor)
+        elif resize_mode == "width":
+            # 固定宽度，等比例缩放高度
+            scale_factor = float(target_size) / width
+            new_width = target_size
+            new_height = int(height * scale_factor)
+        else:
+            # 默认使用 longest 模式
+            scale_factor = float(target_size) / max(height, width)
+            new_width = int(width * scale_factor)
+            new_height = int(height * scale_factor)
         
         # 缩放图像
         resized_image = image.resize((new_width, new_height), Image.LANCZOS)
@@ -304,5 +319,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PDImageResizeV2": "PD:image_resize_V2",
+    "PDImageResizeV2": "PDimage_resize_V2",
 } 

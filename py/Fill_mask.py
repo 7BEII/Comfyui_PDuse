@@ -37,7 +37,7 @@ class PD_MaskFillHoles:
     RETURN_TYPES = ("MASK",)  # 返回填充后的mask
     RETURN_NAMES = ("filled_mask",)  # 返回值的名称
     FUNCTION = "fill_holes"  # 指定执行的方法名称
-    CATEGORY = "PD_Image/Mask"  # 定义节点的类别
+    CATEGORY = "PDuse/Mask"  # 定义节点的类别
 
     def fill_holes(self, mask, fill_method="scipy", min_hole_size=0, iterations=1):
         """
@@ -228,7 +228,7 @@ class PD_MaskRemoveSmallObjects:
     RETURN_TYPES = ("MASK",)  # 返回清理后的mask
     RETURN_NAMES = ("cleaned_mask",)  # 返回值的名称
     FUNCTION = "remove_small_objects"  # 指定执行的方法名称
-    CATEGORY = "PD_Image/Mask"  # 定义节点的类别
+    CATEGORY = "PDuse/Mask"  # 定义节点的类别
 
     def remove_small_objects(self, mask, min_size=100, connectivity=2):
         """

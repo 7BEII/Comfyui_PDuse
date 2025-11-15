@@ -7,6 +7,9 @@ import importlib
 import os
 import sys
 
+# 设置Web目录，用于加载前端资源
+WEB_DIRECTORY = "js"
+
 # 初始化节点映射
 NODE_CLASS_MAPPINGS = {}
 NODE_DISPLAY_NAME_MAPPINGS = {}

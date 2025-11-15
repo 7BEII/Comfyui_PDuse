@@ -15,7 +15,7 @@ class PDImageResizeV3:
     """
     RETURN_TYPES = ("IMAGE", "MASK",)
     FUNCTION = "resize_and_crop"
-    CATEGORY = "PD/ImageProcessing"
+    CATEGORY = "PDuse/Image"
 
     @classmethod
     def INPUT_TYPES(cls):
