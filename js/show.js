@@ -1,22 +1,37 @@
 import { app } from "/scripts/app.js";
 import { ComfyWidgets } from "/scripts/widgets.js";
 
-const isGifNode = (nodeData) => nodeData.name === "PD_ImageListToGif";
+function populate(text) {
+	if (this.widgets) {
+		const pos = this.widgets.findIndex((w) => w.name === "text");
+		if (pos !== -1) {
+			for (let i = pos; i < this.widgets.length; i++) {
+				this.widgets[i].onRemove?.();
+			}
+			this.widgets.length = pos;
+		}
+	}
 
-const buildWidget = ({ node, widgetName, type, opts }) => {
-	return ComfyWidgets[type](node, widgetName, [type, opts], app).widget;
-};
+    // 兼容列表和字符串
+    const v = Array.isArray(text) ? text.join("\n") : text;
 
-const createImagePreview = (src) => {
-	const img = document.createElement("img");
-	img.src = src;
-	img.width = 240;
-	img.height = 240;
-	img.style.objectFit = "contain";
-	img.style.border = "1px solid rgba(255, 255, 255, 0.15)";
-	img.style.marginTop = "6px";
-	return img;
-};
+	const w = ComfyWidgets["STRING"](this, "text", ["STRING", { multiline: true }], app).widget;
+	w.inputEl.readOnly = true;
+	w.inputEl.style.opacity = 0.6;
+	w.value = v;
+    
+    requestAnimationFrame(() => {
+        const sz = this.computeSize();
+        if (sz[0] < this.size[0]) {
+            sz[0] = this.size[0];
+        }
+        if (sz[1] < this.size[1]) {
+            sz[1] = this.size[1];
+        }
+        this.onResize?.(sz);
+        app.graph.setDirtyCanvas(true, false);
+    });
+}
 
 app.registerExtension({
 	name: "PDuse.ShowText",
@@ -30,15 +45,5 @@ app.registerExtension({
 				}
 			};
 		}
-
-		if (isGifNode(nodeData)) {
-			const originalOnExecuted = nodeType.prototype.onExecuted;
-			nodeType.prototype.onExecuted = function (message) {
-				originalOnExecuted?.apply(this, arguments);
-				if (!message?.filepath) return;
-				if (this._gifPreview) {
-					this.widgets?.forEach((w) => w.onRemove?.());
-					this._gifPreview = null;
-				}
-				const url = "/output/" + message.filepath.split(")').join("/output/")
- 
+	},
+});
