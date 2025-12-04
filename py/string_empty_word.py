@@ -84,6 +84,7 @@ class PD_empty_word:
         except Exception as e:
             print(f"StringFormatter错误: {e}")
             return (input_string,)  # 发生错误时返回原始字符串
+        
 
 # 节点映射字典
 NODE_CLASS_MAPPINGS = {
