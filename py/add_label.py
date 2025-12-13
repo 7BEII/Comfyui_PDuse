@@ -2,8 +2,6 @@ import torch
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import os
-import folder_paths
-from comfy.utils import common_upscale
 
 # 获取当前脚本目录
 script_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -22,13 +20,14 @@ class CustomAddLabel:
                 font_files.append(file)
         
         if not font_files:
-            font_files = ["default"]  # 如果没有字体文件，使用默认字体
+            font_files = ["default"]
             
         return {
             "required": {
                 "image": ("IMAGE",),
-                "text_x": ("INT", {"default": 5, "min": 1, "max": 100, "step": 1}),
-                "text_y": ("INT", {"default": 45, "min": 1, "max": 100, "step": 1}),
+                # 逻辑更新：50为居中，1为起始，100为结束
+                "text_x": ("INT", {"default": 50, "min": 1, "max": 100, "step": 1}),
+                "text_y": ("INT", {"default": 50, "min": 1, "max": 100, "step": 1}),
                 "height": ("INT", {"default": 90, "min": 1, "max": 1000, "step": 1}),
                 "font_size": ("INT", {"default": 40, "min": 8, "max": 200, "step": 1}),
                 "font": (font_files,),
@@ -56,27 +55,23 @@ class CustomAddLabel:
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "add_custom_label"
     CATEGORY = "PDuse/Image"
-    DESCRIPTION = """
-    Adds text labels to images with percentage-based positioning.
-    text_x: 1-100 (1=left aligned, 100=right aligned)
-    text_y: 1-100 (position within the added label area)
-    color: light (white background, black text) or dark (black background, white text)
-    Supports batch processing with individual captions.
-    """
+    DESCRIPTION = "Adds text labels by concatenating tensors. 50=Center. Keeps original image pixels 100% intact."
+
     def add_custom_label(self, image, text_x, text_y, text, height, font_size, font, color, direction, caption=""):
+        # image shape: [Batch, Height, Width, Channel]
         batch_size = image.shape[0]
         img_height = image.shape[1]
         img_width = image.shape[2]
         
-        # 根据color模式设置颜色
+        # 1. 设置配色
         if color == 'light':
-            bg_color = (255, 255, 255)  # 白色背景
-            text_color = (0, 0, 0)      # 黑色文字
-        else:  # dark
-            bg_color = (0, 0, 0)        # 黑色背景
-            text_color = (255, 255, 255) # 白色文字
+            bg_color = (255, 255, 255)
+            text_color = (0, 0, 0)
+        else:
+            bg_color = (0, 0, 0)
+            text_color = (255, 255, 255)
         
-        # 获取字体路径
+        # 2. 加载字体
         fonts_dir = os.path.join(script_directory, "fonts")
         if font == "default" or not os.path.exists(os.path.join(fonts_dir, font)):
             try:
@@ -89,98 +84,90 @@ class CustomAddLabel:
                 font_obj = ImageFont.truetype(font_path, font_size)
             except:
                 font_obj = ImageFont.load_default()
-        
-        def process_single_image(input_image, text_content):
-            # 转换图像为PIL格式
-            pil_image = Image.fromarray((input_image.cpu().numpy() * 255).astype(np.uint8))
-            
-            # 创建标签区域
-            if direction in ['up', 'down']:
-                label_img = Image.new("RGB", (img_width, height), bg_color)
-                label_draw = ImageDraw.Draw(label_img)
-                
-                # 计算文本位置 - 基于百分比
-                # text_x: 1-100 转换为实际x坐标
-                actual_x = int((text_x - 1) / 99.0 * (img_width - 10))  # 留10像素边距
-                actual_x = max(5, min(actual_x, img_width - 5))  # 确保在边界内
-                
-                # text_y: 1-100 转换为标签区域内的y坐标
-                actual_y = int((text_y - 1) / 99.0 * (height - font_size))
-                actual_y = max(5, min(actual_y, height - font_size - 5))  # 确保文字完整显示
-                
-                # 绘制文本
-                try:
-                    label_draw.text((actual_x, actual_y), text_content, font=font_obj, fill=text_color)
-                except:
-                    label_draw.text((actual_x, actual_y), text_content, fill=text_color)
-                
-                # 组合图像
-                if direction == 'up':
-                    combined_img = Image.new("RGB", (img_width, img_height + height))
-                    combined_img.paste(label_img, (0, 0))
-                    combined_img.paste(pil_image, (0, height))
-                else:  # down
-                    combined_img = Image.new("RGB", (img_width, img_height + height))
-                    combined_img.paste(pil_image, (0, 0))
-                    combined_img.paste(label_img, (0, img_height))
-            
-            elif direction in ['left', 'right']:
-                label_img = Image.new("RGB", (height, img_height), bg_color)
-                label_draw = ImageDraw.Draw(label_img)
-                
-                # 对于左右方向，需要旋转文本或调整坐标系
-                # 这里简化处理，将文本放在标签区域中央
-                actual_x = int((text_x - 1) / 99.0 * (height - 10))
-                actual_x = max(5, min(actual_x, height - 5))
-                
-                actual_y = int((text_y - 1) / 99.0 * (img_height - font_size))
-                actual_y = max(5, min(actual_y, img_height - font_size - 5))
-                
-                try:
-                    label_draw.text((actual_x, actual_y), text_content, font=font_obj, fill=text_color)
-                except:
-                    label_draw.text((actual_x, actual_y), text_content, fill=text_color)
-                
-                # 组合图像
-                if direction == 'left':
-                    combined_img = Image.new("RGB", (img_width + height, img_height))
-                    combined_img.paste(label_img, (0, 0))
-                    combined_img.paste(pil_image, (height, 0))
-                else:  # right
-                    combined_img = Image.new("RGB", (img_width + height, img_height))
-                    combined_img.paste(pil_image, (0, 0))
-                    combined_img.paste(label_img, (img_width, 0))
-            
-            # 转换回tensor格式
-            result_array = np.array(combined_img).astype(np.float32) / 255.0
-            return torch.from_numpy(result_array).unsqueeze(0)
-        # 批量处理
-        processed_images = []
-        
+
+        # 3. 准备文字内容列表
         if caption == "":
-            # 使用统一文本
-            for i in range(batch_size):
-                processed_img = process_single_image(image[i], text)
-                processed_images.append(processed_img)
+            captions = [text] * batch_size
         else:
-            # 使用个别caption
             captions = caption.split('\n') if caption else [text] * batch_size
-            
-            # 确保caption数量匹配图像数量
             while len(captions) < batch_size:
                 captions.append(text)
+
+        result_images = []
+
+        for i in range(batch_size):
+            # === 关键点1：直接引用原图 Tensor，不做任何处理，保证原图色彩绝对不变 ===
+            current_original_tensor = image[i] 
             
-            for i in range(batch_size):
-                caption_text = captions[i] if i < len(captions) else text
-                processed_img = process_single_image(image[i], caption_text)
-                processed_images.append(processed_img)
-        
-        # 合并批次
-        result_batch = torch.cat(processed_images, dim=0)
+            # 获取当前文字
+            current_text = captions[i] if i < len(captions) else text
+
+            # 4. 创建 Label 条的画布 (纯色背景)
+            # 根据方向决定 Label 的宽和高
+            if direction in ['up', 'down']:
+                label_w = img_width
+                label_h = height
+            else: # left, right
+                label_w = height
+                label_h = img_height
+
+            label_img = Image.new("RGB", (label_w, label_h), bg_color)
+            label_draw = ImageDraw.Draw(label_img)
+
+            # 5. 计算文字坐标 (支持 50=居中 逻辑)
+            # 获取文字实际渲染大小
+            try:
+                bbox = font_obj.getbbox(current_text) # (left, top, right, bottom)
+            except AttributeError:
+                bbox = label_draw.textbbox((0, 0), current_text, font=font_obj)
+            
+            text_w = bbox[2] - bbox[0]
+            text_h = bbox[3] - bbox[1]
+
+            # 计算 X 轴位置 (剩余空间 * 百分比)
+            # text_x: 1 -> ratio 0.0 (左/上对齐)
+            # text_x: 50 -> ratio ~0.5 (居中)
+            # text_x: 100 -> ratio 1.0 (右/下对齐)
+            ratio_x = (text_x - 1) / 99.0
+            available_w = label_w - text_w
+            draw_x = available_w * ratio_x - bbox[0] # 减去bbox[0]以修正字体左边距
+
+            # 计算 Y 轴位置
+            ratio_y = (text_y - 1) / 99.0
+            available_h = label_h - text_h
+            draw_y = available_h * ratio_y - bbox[1] # 减去bbox[1]以修正字体上边距
+
+            # 绘制文字到 Label 上
+            label_draw.text((draw_x, draw_y), current_text, font=font_obj, fill=text_color)
+
+            # 6. 将生成的 Label 转为 Tensor
+            # 注意：只有这个新生成的色块经历了 float转换，原图没有
+            label_numpy = np.array(label_img).astype(np.float32) / 255.0
+            label_tensor = torch.from_numpy(label_numpy) # shape: [H, W, C]
+
+            # === 关键点2：物理拼接 (Tensor Concatenation) ===
+            # 直接把原图和Label拼在一起，而不是画在原图上
+            
+            if direction == 'up':
+                # 高度方向拼接：Label在上，原图在下
+                new_img = torch.cat((label_tensor, current_original_tensor), dim=0)
+            elif direction == 'down':
+                # 原图在上，Label在下
+                new_img = torch.cat((current_original_tensor, label_tensor), dim=0)
+            elif direction == 'left':
+                # 宽度方向拼接：Label在左，原图在右
+                new_img = torch.cat((label_tensor, current_original_tensor), dim=1)
+            elif direction == 'right':
+                # 原图在左，Label在右
+                new_img = torch.cat((current_original_tensor, label_tensor), dim=1)
+            
+            result_images.append(new_img)
+
+        # 重新堆叠为 Batch
+        result_batch = torch.stack(result_images)
         
         return (result_batch,)
 
-# 节点注册
 NODE_CLASS_MAPPINGS = {
     "CustomAddLabel": CustomAddLabel
 }
