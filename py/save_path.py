@@ -34,16 +34,20 @@ class PDTEXT_SAVE_PATH:
                 "padding": ("INT", {"default": 1, "min": 0, "max": 9, "step": 1}),  # 数字填充位数
                 "number_start": ("BOOLEAN", {"default": False}),  # 数字是否在开头
                 "file_extension": (["txt", "json", "csv", "log", "md"], {"default": "txt"}),  # 文件扩展名
+                "refresh_each_run": ("BOOLEAN", {"default": False}),
             },
         }
 
-    RETURN_TYPES = ()
-    RETURN_NAMES = ()
+    @classmethod
+    def IS_CHANGED(cls, refresh_each_run=False, **kwargs):
+        return time.time() if refresh_each_run else 0
+
+    RETURN_TYPES = ("BOOLEAN", "INT",)
+    RETURN_NAMES = ("success", "saved_count",)
     FUNCTION = "save_text_file"
     CATEGORY = "PDuse/Text"
-    OUTPUT_NODE = True
 
-    def save_text_file(self, text, output_folder, filename, delimiter, padding, number_start, file_extension):
+    def save_text_file(self, text, output_folder, filename, delimiter, padding, number_start, file_extension, refresh_each_run):
         """
         保存文本文件到指定路径
         
@@ -55,6 +59,7 @@ class PDTEXT_SAVE_PATH:
             padding: 数字填充位数
             number_start: 数字是否在开头
             file_extension: 文件扩展名
+            refresh_each_run: 是否每次运行都强制重新执行（避免缓存）
         """
         try:
             # 处理输入数据
@@ -150,12 +155,12 @@ class PDTEXT_SAVE_PATH:
                 saved_files.append(file_path)
                 print(f"[PDTEXT_SAVE_PATH_V3] 文本已保存到: {file_path}")
             
-            # 不需要返回值
-            return ()
+            saved_count = len(saved_files)
+            return (saved_count > 0, saved_count)
                 
         except Exception as e:
             print(f"[PDTEXT_SAVE_PATH_V3] 保存文本时发生错误: {e}")
-            return ()
+            return (False, 0)
 
     def _get_next_counter(self, output_path, filename, delimiter, padding, number_start, file_extension):
         """

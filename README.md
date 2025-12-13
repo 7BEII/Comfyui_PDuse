@@ -95,6 +95,141 @@ pip install -r requirements.txt
 - zip_file_upload：ZIP文件上传
 - 输出：文本内容列表、拼接文本
 
+##### PD保存文本(路径+文件名)
+> 批量保存文本文件节点，接收文本内容列表和文件名列表，按对应关系将文本保存到指定目录。与 PD加载文本文件夹 节点配套使用。
+
+- output_directory：输出文件夹路径（必填）
+- text_list：文本内容列表（列表输入）
+- filename_text：文件名列表（多行文本，每行一个文件名）
+
+**功能特点：**
+- ✅ 支持批量文本文件保存
+- ✅ 自动创建输出目录（如果不存在）
+- ✅ 按输入顺序一一对应保存（filename[0] → text_list[0]）
+- ✅ 自动添加 .txt 扩展名（如果文件名没有扩展名）
+- ✅ UTF-8 编码保存，完美支持中文
+- ✅ 详细的保存报告和错误处理
+- ✅ 数量不匹配时自动取最小值保存
+
+**使用场景：**
+- 批量保存图像标注文本
+- 批量保存提示词文件
+- 文本内容的批量导出
+- 配合加载文本节点进行文本处理流程
+
+**对应关系示例：**
+```
+text_list = ["内容1", "内容2", "内容3"]
+filename_text = "10_R.txt\n11_R.txt\n12_R.txt"
+
+保存结果：
+- 10_R.txt → 保存"内容1"
+- 11_R.txt → 保存"内容2"  
+- 12_R.txt → 保存"内容3"
+```
+
+##### PD 字符串转json (语言自动检测)
+> 将输入的字符串转换为包含caption和lang字段的JSON格式字符串，支持批量处理。
+
+- text：输入文本内容（必需，支持列表批处理）
+- lang：语言代码（可选，默认"en"，可选：en/zh/ja/ko/auto等）
+
+**功能特点：**
+- ✅ 支持批量文本列表输入输出
+- ✅ 自动语言检测（中文/英文/日文/韩文）
+- ✅ 输出标准JSON格式：`{"caption": "...", "lang": "en"}`
+- ✅ 保持输入输出顺序完全一致
+- ✅ UTF-8编码，完美支持中文
+
+**使用示例：**
+```
+输入: "This is a photography work..."
+输出: {"caption": "This is a photography work...", "lang": "en"}
+```
+
+##### PD_CaptionJSON编辑器
+> 解析并编辑JSON格式的caption字符串，支持替换词语、添加前后缀等批量操作。
+
+- json_string：输入JSON字符串（必需，支持列表批处理）
+- new_caption：完全替换caption内容（可选）
+- add_prefix：在caption前添加文本（可选）
+- add_suffix：在caption后添加文本（可选）
+- replace_from：要替换的词语（每行一个，可选）
+- replace_to：替换为的词语（每行一个，可选）
+- new_lang：修改语言代码（可选，默认"en"）
+
+**功能特点：**
+- ✅ 支持批量JSON编辑
+- ✅ 多种编辑操作：完全替换、词语替换、前后缀添加
+- ✅ 输出完整JSON字符串、caption文本、语言代码
+- ✅ 保持输入输出顺序一致
+
+**使用场景：**
+- 批量修改训练数据标注
+- 添加通用前缀后缀词（如quality tags）
+- 批量替换或删除特定词语
+- 修改语言标签
+
+##### PD_CaptionJSON解析器
+> 解析JSON格式的caption字符串，快速提取caption和lang字段，支持批量处理。
+
+- json_string：输入JSON字符串（必需，支持列表批处理）
+
+**输出：**
+- caption：提取的caption文本列表
+- lang：语言代码列表
+
+**功能特点：**
+- ✅ 快速批量解析JSON
+- ✅ 自动提取caption和lang字段
+- ✅ 解析失败时智能降级处理
+- ✅ 保持输入输出顺序一致
+
+##### PD text_list_string_add word
+> 批量为字符串添加词语，支持前缀、后缀、替换、插入等多种操作，适用于文本批处理。
+
+- text：输入文本内容（必需，支持列表批处理）
+- add_prefix：在文本前添加词语（可选）
+- add_suffix：在文本后添加词语（可选）
+- replace_from：要替换的词语（每行一个，可选）
+- replace_to：替换为的词语（每行一个，可选）
+- insert_word：要插入的词语（可选）
+- insert_position：插入位置（字符索引，默认0）
+- separator：词语分隔符（默认空格）
+
+**功能特点：**
+- ✅ 支持批量文本处理
+- ✅ 前缀、后缀、替换、插入多种操作
+- ✅ 自定义分隔符
+- ✅ 保持输入输出顺序一致
+
+**使用示例：**
+```
+输入: "a beautiful woman"
+add_prefix: "masterpiece, best quality,"
+add_suffix: ", 4k, ultra detailed"
+输出: "masterpiece, best quality, a beautiful woman, 4k, ultra detailed"
+```
+
+##### PD文本列表打包
+> 将多个文本内容和对应的文件名打包成列表格式，可与文本加载、排序等节点配合使用。
+
+- text_1~5：文本内容输入（最多5个，可选）
+- filename_1~5：对应的文件名（可选）
+- input_text_list：直接输入文本列表（可选）
+- input_filename_text：与列表配套的文件名（可选）
+
+**输出：**
+- text_list：文本列表
+- filename_text：文件名列表（多行文本）
+- count：文本数量
+
+##### PD文本列表解包
+> 从文本列表中提取单个文本项，与文本列表打包节点配套使用。
+
+##### PD文本列表排序
+> 对文本列表和对应的文件名进行排序整理。
+
 ##### PD:imageconcante_V1
 ![PDimageconcante_V1](img/PDimageconcante_V1.png)
 > 两张图片按指定方向拼接合并。
@@ -104,6 +239,7 @@ pip install -r requirements.txt
 - direction：合并方向（right/down/left/up）
 - match_size：尺寸对齐方式（longest/crop by image1）
 - image2_crop：裁切位置（center/top/bottom/left/right）
+
 ### image处理
 
 ##### PDIMAGE:Load_Images
@@ -275,6 +411,41 @@ pip install -r requirements.txt
 
 ### 文件处理
 
+##### PD aitookit training redux
+> AI训练数据分类整理节点，将配对的图片和文本文件与未配对的文件自动分类到不同文件夹，方便整理训练数据集。
+
+- source_folder：源文件夹路径（必需）
+- paired_folder_name：配对文件的子文件夹名称（默认"paired_files"）
+- unpaired_folder_name：未配对文件的子文件夹名称（默认"unpaired_files"）
+- image_extensions：图片扩展名（默认".png,.jpg,.jpeg,.webp"）
+- text_extension：文本扩展名（默认".txt"）
+
+**功能特点：**
+- ✅ 智能识别图片和文本的配对关系
+- ✅ 按文件名自动分类（如1_R.png + 1_R.txt为配对）
+- ✅ 源文件保持不动，仅复制到子文件夹
+- ✅ 自动创建分类子文件夹
+- ✅ 详细的处理报告和统计信息
+- ✅ 支持多种图片格式
+
+**工作原理：**
+- 配对文件（有图有文本）→ 复制到 `paired_files/`
+- 未配对文件（只有图或只有文本）→ 复制到 `unpaired_files/`
+
+**使用场景：**
+- 整理AI训练数据集
+- 分离已标注和未标注的数据
+- 检查数据集完整性
+- 准备训练数据
+
+**示例：**
+```
+源文件夹/
+  ├── 1_R.png + 1_R.txt  → paired_files/
+  ├── 1_T.png           → unpaired_files/
+  └── 2_R.png + 2_R.txt  → paired_files/
+```
+
 ##### PD:number_start
 
 > 文件排序重命名节点，将"T_1", "T_2", "T_3"格式的文件名重命名为"1_T", "2_T", "3_T"，T参数可以自定义为其他单词，直接执行重命名操作。
@@ -378,6 +549,18 @@ opencv-python
 
 ---
 
-**版本**: v3.2  
-**更新日期**: 2025-11-15  
+**版本**: v3.3  
+**更新日期**: 2024-11-21  
 **ComfyUI兼容性**: 最新版本
+
+---
+
+## 📝 更新日志
+
+### v3.3 (2024-11-21)
+- ✅ 新增：PD 字符串转json（语言自动检测）- 支持批量文本转JSON格式
+- ✅ 新增：PD_CaptionJSON编辑器 - 批量编辑JSON格式的caption
+- ✅ 新增：PD_CaptionJSON解析器 - 快速解析JSON提取内容
+- ✅ 新增：PD text_list_string_add word - 批量字符串添加词语节点
+- ✅ 新增：PD aitookit training redux - AI训练数据分类整理工具
+- ✅ 改进：所有新节点均支持列表批处理，保持输入输出顺序一致
