@@ -12,6 +12,7 @@ import re
 from comfy.cli_args import args
 import folder_paths
 from datetime import datetime
+import time
 
 class PD_imagesave_path:
     """
@@ -42,17 +43,23 @@ class PD_imagesave_path:
                      "numberfront": ("BOOLEAN", {"default": True}),  # 数字位置：True=前面，False=后面
                      "separator": ("STRING", {"default": "_"}),  # 分割符，默认为下划线
                      "show_preview": ("BOOLEAN", {"default": True}),  # 是否在前端显示预览图
+                     "refresh_each_run": ("BOOLEAN", {"default": False}),
                      },
                 "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},  # 隐藏的提示信息和额外PNG信息
                 }
 
-    RETURN_TYPES = ()  # 无返回值类型
+    @classmethod
+    def IS_CHANGED(cls, refresh_each_run=False, **kwargs):
+        return time.time() if refresh_each_run else 0
+
+    RETURN_TYPES = ("BOOLEAN", "INT",)
+    RETURN_NAMES = ("success", "saved_count",)
     FUNCTION = "save_images"  # 主要执行函数名
     OUTPUT_NODE = True  # 标识为输出节点
     CATEGORY = "PD/Image"  # 节点分类
 
     def save_images(self, images, filename_prefix="R", prompt=None, extra_pnginfo=None, 
-                   custom_output_dir="", format="png", numberfront=True, separator="_", show_preview=True):
+                   custom_output_dir="", format="png", numberfront=True, separator="_", show_preview=True, refresh_each_run=False):
         """
         保存图像主方法
         """
@@ -77,18 +84,23 @@ class PD_imagesave_path:
             # 调用私有方法保存图像到自定义目录，获取保存结果
             results = self._save_images_to_dir(images, filename_prefix, prompt, extra_pnginfo, 
                                    custom_output_dir, format, numberfront, separator)
+
+            saved_count = len(results)
+            success = saved_count > 0
             
             # 根据show_preview参数决定返回值
             if show_preview:
                 # 返回UI预览信息，前端会显示图像预览
-                return {"ui": {"images": results}}
+                return {"ui": {"images": results}, "result": (success, saved_count)}
             else:
                 # 返回空UI字典，确保节点执行完成但不显示预览图
-                return {"ui": {}}
+                return (success, saved_count)
         
         except Exception as e:
             print(f"保存图像时发生错误: {e}")
-            return {"ui": {}}
+            if show_preview:
+                return {"ui": {}, "result": (False, 0)}
+            return (False, 0)
 
     def _save_images_to_dir(self, images, filename_prefix, prompt, extra_pnginfo, 
                            output_dir, format, numberfront, separator):
