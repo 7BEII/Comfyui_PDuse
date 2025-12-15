@@ -5,20 +5,15 @@ Git 自动同步工具
 用法: python gitrun.py [命令]
 
 命令说明:
-  push         - 强制推送本地到远程（直接覆盖，保留历史记录）
-  pull         - 强制拉取远程到本地（直接覆盖，保留历史记录）
+  push         - 强制推送本地到远程-覆盖
+  pull         - 强制拉取远程到本地-覆盖
   sync         - 智能同步（先拉取合并，再推送）
-  log          - 查看提交历史并支持快速回退版本
+  status       - 查看本地与远程的差异（显示文件变更统计）
+  log          - 查看提交历史并支持快速回退版本（输入数字选择）
   history      - 查看完整提交历史
   config       - 配置远程仓库地址
 
-重要说明:
-  • push/pull 都会保留完整的 Git 历史记录，可以随时回退
-  • push 是纯粹的本地覆盖远程，不会先拉取远程内容
-  • pull 是纯粹的远程覆盖本地，不会保留本地未推送的修改
-  • sync 才会进行智能合并
-  • log 命令可以查看历史并直接回退版本（输入数字选择，0或回车跳过）
-  • 所有历史提交都保存在 .git 目录中，永不丢失
+重要说明: 所有历史提交都保存在 .git 目录中，永不丢失
 """
 
 import os
@@ -345,6 +340,49 @@ class GitSyncTool:
         else:
             print("⚠️  推送失败或无新内容需要推送")
     
+    def show_status(self):
+        """查看本地与远程仓库的差异"""
+        print("📊 本地与远程仓库差异")
+        
+        if not self.is_git_repo():
+            print("❌ 当前目录不是 Git 仓库")
+            return
+        
+        branch = self.get_current_branch()
+        if not branch:
+            print("❌ 无法获取当前分支")
+            return
+        
+        # 检查远程仓库
+        remote_url = self.get_remote_url()
+        if not remote_url:
+            print("⚠️  未配置远程仓库")
+            return
+        
+        print(f"🌐 仓库地址: {remote_url}")
+        
+        # 获取远程最新信息
+        self.run_command("git fetch origin", check=False, silent=True)
+        
+        # 获取远程最新提交时间
+        remote_time_result = self.run_command(f"git log -1 --format=%ci origin/{branch}", check=False, silent=True)
+        if remote_time_result and remote_time_result.returncode == 0 and remote_time_result.stdout.strip():
+            print(f"📅 远程更新时间: {remote_time_result.stdout.strip()}")
+        
+        # 获取本地当前时间（工作区最后修改时间）
+        print(f"📅 本地当前时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        # 直接对比当前工作区与远程仓库的差异（包括未提交的更改）
+        print("\n📝 变更统计 (本地相对于远程):")
+        print("   说明: (+) 代表本地新增的内容，(-) 代表本地已删除的内容")
+        
+        # 使用 --stat 只显示文件统计，不显示具体内容
+        diff_result = self.run_command(f"git diff --stat origin/{branch}", check=False, silent=True)
+        if diff_result and diff_result.stdout.strip():
+            print(diff_result.stdout)
+        else:
+            print("✅ 本地与远程完全同步，无差异")
+    
     def show_log(self, num=10):
         """查看提交历史并支持直接回退"""
         print(f"📋 最近 {num} 次提交历史")
@@ -570,6 +608,8 @@ def main():
         tool.force_pull()
     elif command == 'sync':
         tool.smart_sync()
+    elif command == 'status':
+        tool.show_status()
     elif command == 'log':
         tool.show_log(5)
     elif command == 'history':
