@@ -48,16 +48,17 @@ class Load_Images_V1:
                     "min": 0,
                     "max": 0xffffffffffffffff,
                     "step": 1,
-                    "display": "number"
+                    "display": "number",
+                    "control_after_generate": True
                 }),
             }
         }
 
-    RETURN_TYPES = ("IMAGE", "MASK", "STRING")
-    RETURN_NAMES = ("images", "masks", "file_paths")
+    RETURN_TYPES = ("IMAGE", "MASK", "STRING", "STRING", "INT")
+    RETURN_NAMES = ("images", "masks", "file_paths", "image_names", "image_numbers")
     FUNCTION = "load_images_recursive"
     CATEGORY = "PD_Image/Loading"
-    OUTPUT_IS_LIST = (True, True, True)
+    OUTPUT_IS_LIST = (True, True, True, True, False)
 
     @classmethod
     def IS_CHANGED(cls, **kwargs):
@@ -185,6 +186,7 @@ class Load_Images_V1:
         images = []
         masks = []
         file_paths = []
+        image_names = []
 
         limit_images = image_load_cap > 0
         image_count = 0
@@ -215,6 +217,7 @@ class Load_Images_V1:
                 images.append(image)
                 masks.append(mask)
                 file_paths.append(str(image_path))
+                image_names.append(os.path.basename(image_path))
                 image_count += 1
                 
                 # 输出加载进度
@@ -230,15 +233,16 @@ class Load_Images_V1:
 
         print(f"Successfully loaded {len(images)} images")
         print(f"排序方式: {sort_method}")
-        return (images, masks, file_paths)
+        image_numbers = len(images)
+        return (images, masks, file_paths, image_names, image_numbers)
 
 
 # 节点映射配置
 NODE_CLASS_MAPPINGS = {
-    "Load_Images_V1": Load_Images_V1
+    "PD_loadimage_path advance": Load_Images_V1
 }
 
 # 设置节点在 UI 中显示的名称
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Load_Images_V1": "PD_Load Images"
-} 
+    "PD_loadimage_path advance": "PD_loadimage_path advance"
+}

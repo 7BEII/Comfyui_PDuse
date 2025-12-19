@@ -319,7 +319,6 @@ NODE_CLASS_MAPPINGS = {
     "PD_Image_centerCrop": PD_Image_centerCrop,
     "PD_GetImageSize": PD_GetImageSize, 
     "PD_GetImageRatio": PD_GetImageRatio,
-
     "PDIMAGE_LongerSize": PDIMAGE_LongerSize
     
 }
@@ -330,7 +329,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "PD_Image_centerCrop": "PD:Image centerCrop",
     "PD_GetImageSize": "PD:GetImageSize", 
     "PD_GetImageRatio": "PD:GetImageRatio",
-
     "PDIMAGE_LongerSize": "PDIMAGE:LongerSize",
 
 }

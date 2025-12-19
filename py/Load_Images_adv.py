@@ -234,10 +234,10 @@ class Load_Images_Advance:
 
 # 节点映射配置
 NODE_CLASS_MAPPINGS = {
-    "Load_Images_Advance": Load_Images_Advance
+    
 }
 
 # 设置节点在 UI 中显示的名称
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Load_Images_Advance": "PD_Load Images Advance"
-} 
+    
+}

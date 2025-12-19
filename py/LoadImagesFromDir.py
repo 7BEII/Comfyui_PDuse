@@ -92,9 +92,9 @@ class PD_LoadImagesFromDir:
 
 # 注册节点
 NODE_CLASS_MAPPINGS = {
-    "PD_LoadImagesFromDir": PD_LoadImagesFromDir
+    "PD_loadimage_path": PD_LoadImagesFromDir
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PD_LoadImagesFromDir": "PD加载文件夹(输出列表)"
+    "PD_loadimage_path": "PD_loadimage_path"
 }
