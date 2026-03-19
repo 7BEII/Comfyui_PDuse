@@ -25,6 +25,24 @@ pip install -r requirements.txt
 
 ## 📖 节点说明
 
+### Logic/条件判断
+
+##### PD:if
+> 条件判断节点，将输入的 `if`、`cond_1`、`cond_2` 做逻辑判断，输出布尔结果，同时输出执行计数。
+
+**输入：**
+- if（BOOLEAN）：条件开关
+- cond_1（any）：任意类型输入（会进行 `bool(cond_1)` 判断）
+- cond_2（any）：任意类型输入（会进行 `bool(cond_2)` 判断）
+
+**输出：**
+- output（BOOLEAN）：`bool(if) and bool(cond_1) and bool(cond_2)`
+- count（INT）：执行成功输出 `1`，异常输出 `0`
+
+**说明：**
+- ✅ 输入端口顺序：if → cond_1 → cond_2
+- ✅ 输出端口顺序：output → count
+
 ### text处理
 
 ##### PD Show Text
@@ -242,6 +260,27 @@ add_suffix: ", 4k, ultra detailed"
 
 ### image处理
 
+##### PD_save path
+> 自定义路径保存图片节点。支持自定义输出目录、文件名前缀、文件名数字位置等，并可输出保存结果（成功/数量）。
+
+**输入：**
+- images（IMAGE）：待保存图片
+- filename_prefix（STRING）：文件名前缀
+- custom_output_dir（STRING）：自定义输出目录（可空）
+- format（png/jpg）：保存格式
+- numberfront（BOOLEAN）：数字在前/在后
+- separator（STRING）：分隔符
+- show_preview（BOOLEAN）：是否显示保存预览
+- refresh_each_run（BOOLEAN）：每次运行强制刷新（避免缓存，确保每次都重新保存）
+
+**输出：**
+- success（BOOLEAN）：本次保存成功（保存数量 > 0）
+- saved_count（INT）：本次保存数量
+
+**说明：**
+- ✅ 当 `show_preview=True` 时，节点会返回预览UI，同时仍然输出 `success/saved_count`
+- ✅ 当 `refresh_each_run=True` 时，会强制节点每次运行都重新执行保存逻辑
+
 ##### PDIMAGE:Load_Images
 ![PD_Load_Images](img/PD_Load_Images.png)
 > 批量图片加载节点，从指定目录中加载多张图片，支持多种加载选项和缓存控制。
@@ -359,6 +398,8 @@ add_suffix: ", 4k, ultra detailed"
 - threshold：颜色检测阈值（0-255）
 - padding：裁切后保留的边距像素（0-100）
 
+- output_path：输出路径（可选，不填则覆盖原图）
+
 ##### PD_BatchCropBlackBorder
 ![PD_BatchCropBlackBorder](img/PDimage_cropborderbach.png)
 > 批量图像边框裁切节点，批量处理文件夹中的所有图片，自动检测并移除边框。
@@ -368,6 +409,23 @@ add_suffix: ", 4k, ultra detailed"
 - threshold：颜色检测阈值（0-255）
 - padding：裁切后保留的边距像素（0-100）
 - output_path：输出路径（可选，不填则覆盖原图）
+
+##### PDcrop: Image Grid
+> 将图片按行列分割成网格，并输出为图像批量（Batch）。适用于处理表情包或九宫格图片。
+
+![PDcrop: Image Grid](img/crop/PDcropImage_Grid.png)
+ 
+- **image**：输入待分割图片（IMAGE）
+- **columns**：列数（INT，默认3）
+- **rows**：行数（INT，默认3）
+
+
+**功能特点：**
+- ✅ 支持自定义行列分割
+- ✅ 自动计算切片大小
+- ✅ 输出为图像 Batch，可并发执行后续处理
+- ✅ 适用于 3x3 表情包、九宫格等场景
+
 
 ##### PD:remove_background
 > 智能背景移除节点，去除图像中的黑色背景，输出原图和透明度掩码，支持阈值调节和边缘平滑。
@@ -518,6 +576,19 @@ add_suffix: ", 4k, ultra detailed"
 - 工作流参数配置管理
 
 ---
+### 抠图专用：
+![UnMultBlackBackground](img/image/UnMultBlackBackground.png)
+PDTool:UnMultBlackBackground：（抠图黑色背景）
+把 black_threshold 慢慢调高（比如调到 0.05、0.08），直到周围的噪点完全消失，背景变得干干净净！
+
+如果你把它设为 0.0：
+就等于关闭了这个过滤器，效果就会回到你之前那张满屏幕红绿花屏的状态。
+
+0.020 这个数值的意思是：告诉程序，凡是亮度低于 2% (0.02) 的像素，统统不要去算什么发光提亮了，直接把它们当成“纯正的黑色”处理掉！
+
+低于 0.020 的像素：被当做无用的 JPG 压缩噪点，直接变成纯透明的完美背景。
+
+高于 0.020 的像素：被当做真正有用的法杖发光边缘，正常进行完美的色彩还原和提亮。
 
 ### 动画/视频处理
 
@@ -556,6 +627,10 @@ opencv-python
 ---
 
 ## 📝 更新日志
+
+### v3.4 (2026-01-25)
+- ✅ 新增：PDcrop: Image Grid - 将九宫格/表情包图片分割为 Batch 图像
+- ✅ 改进：优化了节点加载逻辑
 
 ### v3.3 (2024-11-21)
 - ✅ 新增：PD 字符串转json（语言自动检测）- 支持批量文本转JSON格式

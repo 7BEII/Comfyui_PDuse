@@ -57,9 +57,6 @@ if os.path.exists(py_dir):
 else:
     print(f"警告: py目录不存在: {py_dir}")
 
-# Web界面目录
-WEB_DIRECTORY = "./js"
-
 # 显示加载信息
 if NODE_CLASS_MAPPINGS:
     print("=" * 50)

@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import os
+from comfy.utils import common_upscale
 
 # 获取当前脚本目录
 script_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -25,6 +26,8 @@ class CustomAddLabel:
         return {
             "required": {
                 "image": ("IMAGE",),
+                "enable_resize": ("BOOLEAN", {"default": False}),
+                "longer_size": ("INT", {"default": 1024, "min": 1, "max": 99999, "step": 1}),
                 # 逻辑更新：50为居中，1为起始，100为结束
                 "text_x": ("INT", {"default": 50, "min": 1, "max": 100, "step": 1}),
                 "text_y": ("INT", {"default": 50, "min": 1, "max": 100, "step": 1}),
@@ -57,7 +60,20 @@ class CustomAddLabel:
     CATEGORY = "PDuse/Image"
     DESCRIPTION = "Adds text labels by concatenating tensors. 50=Center. Keeps original image pixels 100% intact."
 
-    def add_custom_label(self, image, text_x, text_y, text, height, font_size, font, color, direction, caption=""):
+    def add_custom_label(self, image, enable_resize, longer_size, text_x, text_y, text, height, font_size, font, color, direction, caption=""):
+        if enable_resize:
+            _, h, w, _ = image.shape
+            if h >= w:
+                new_h = longer_size
+                new_w = int(w * (longer_size / h))
+            else:
+                new_w = longer_size
+                new_h = int(h * (longer_size / w))
+            
+            samples = image.movedim(-1, 1)
+            samples = common_upscale(samples, new_w, new_h, "bicubic", False)
+            image = samples.movedim(1, -1)
+
         # image shape: [Batch, Height, Width, Channel]
         batch_size = image.shape[0]
         img_height = image.shape[1]
