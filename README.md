@@ -28,6 +28,7 @@ pip install -r requirements.txt
 ### Logic/条件判断
 
 ##### PD:if
+![alt text](image-1.png)
 > 条件判断节点，将输入的 `if`、`cond_1`、`cond_2` 做逻辑判断，输出布尔结果，同时输出执行计数。
 
 **输入：**
@@ -43,25 +44,12 @@ pip install -r requirements.txt
 - ✅ 输入端口顺序：if → cond_1 → cond_2
 - ✅ 输出端口顺序：output → count
 
-### text处理
+## 文本处理
 
 ##### PD Show Text
+![alt text](image-2.png)
 > 文本显示节点，用于在ComfyUI界面中显示文本信息，通常用于显示处理结果、状态报告或调试信息。
-
 - text：要显示的文本内容（支持来自其他节点的文本输出）
-
-**功能特点：**
-- ✅ 在工作流中实时显示文本信息
-- ✅ 支持显示处理结果和状态报告
-- ✅ 可用于调试和监控节点执行状态
-- ✅ 支持多行文本显示
-- ✅ 自动保存到工作流信息中
-
-**使用场景：**
-- 显示文件处理统计信息
-- 显示错误信息和警告
-- 监控批处理进度
-- 调试工作流执行状态
 
 ##### PD:Image_and_Text
 ![PD_Image_and_Text](img/PD_Image_and_Text.png)
@@ -75,7 +63,8 @@ pip install -r requirements.txt
 - ​​padding_down：文字​**​下方​**​的留白高度  10- 1000 ,可以往下扩多一些方便排版
 - font_file​  选择字体样式, 需将.ttf/.otf文件放入插件目录的fonts文件夹
 - longer_size ： 单张图的最长边尺寸限制
-##### PD_Text Overlay Node
+
+#### PD_Text Overlay Node
 ![PD_Text Overlay Node](img/PD_Text%20Overlay%20Node.png)
 > 给图片添加文字，并且指定位置贴上去。
 
@@ -221,13 +210,6 @@ filename_text = "10_R.txt\n11_R.txt\n12_R.txt"
 - ✅ 自定义分隔符
 - ✅ 保持输入输出顺序一致
 
-**使用示例：**
-```
-输入: "a beautiful woman"
-add_prefix: "masterpiece, best quality,"
-add_suffix: ", 4k, ultra detailed"
-输出: "masterpiece, best quality, a beautiful woman, 4k, ultra detailed"
-```
 
 ##### PD文本列表打包
 > 将多个文本内容和对应的文件名打包成列表格式，可与文本加载、排序等节点配合使用。
@@ -351,7 +333,7 @@ add_suffix: ", 4k, ultra detailed"
 - mask_optional：可选的mask输入
 
 ##### PD:imagesize_v2
-![PD：imagesize_v2](img/PD：imagesize_v2.png)
+![alt text](image.png)
 > 图片缩放裁切节点V2，支持三种处理模式：纯缩放、比例裁切、强制拉伸。
 
 - pixels：输入图片张量
@@ -363,31 +345,15 @@ add_suffix: ", 4k, ultra detailed"
 - vertical_align：垂直对齐方式
 - mask_optional：可选的mask输入
 
-##### PD_image ratiosize
-![PD_image ratiosize](img/PD_image%20ratiosize.png)
-> 基于最长边的智能分辨率计算节点，根据宽高比和最长边尺寸自动计算图像分辨率，特别适合AI图像生成工作流。
+##### PD:ratio selector
+![alt text](image-3.png)
+> 很简单的逻辑，主要是处理输出尺寸，比例 方便后续出图控制比例的流程。
+RETURN_TYPES = ("STRING", "INT", "INT")
+any thing输入 都可以怼进去，适合调整尺寸。
+- max_size：最长边尺寸（256-4096，默认1024）
+- aspect_ratio：宽高比选择
+只输出需要的 ratio (字符串), width (整数), height (整数)
 
-- max_dimension：最长边尺寸（256-4096，默认1024）
-- aspect_ratio：宽高比选择（3:4竖向、4:3横向、1:1正方形）
-- divisible_by：整除要求（8/16/32/64，默认64）
-
-**功能特点：**
-- ✅ 基于最长边计算，符合用户习惯
-- ✅ 确保分辨率能被64整除，AI模型友好
-- ✅ 提供直观的预览图像显示
-- ✅ 支持多种常用宽高比
-- ✅ 输出整数值，可直接连接其他节点
-
-**计算示例：**
-- 3:4比例 + 1024最长边 → 768×1024
-- 4:3比例 + 1024最长边 → 1024×768  
-- 1:1比例 + 1024最长边 → 1024×1024
-
-**输出内容：**
-- width：计算出的宽度（INT）
-- height：计算出的高度（INT）
-- resolution：分辨率字符串（如"768 x 1024"）
-- preview：预览图像（显示计算结果）
 
 ##### PD_CropBorder
 
