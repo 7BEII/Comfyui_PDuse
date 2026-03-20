@@ -28,7 +28,7 @@ pip install -r requirements.txt
 ### Logic/条件判断
 
 ##### PD:if
-![alt text](image-1.png)
+![alt text](img/image/image-1.png)
 > 条件判断节点，将输入的 `if`、`cond_1`、`cond_2` 做逻辑判断，输出布尔结果，同时输出执行计数。
 
 **输入：**
@@ -47,7 +47,7 @@ pip install -r requirements.txt
 ## 文本处理
 
 ##### PD Show Text
-![alt text](image-2.png)
+![alt text](img/image/image-2.png)
 > 文本显示节点，用于在ComfyUI界面中显示文本信息，通常用于显示处理结果、状态报告或调试信息。
 - text：要显示的文本内容（支持来自其他节点的文本输出）
 
@@ -134,63 +134,20 @@ filename_text = "10_R.txt\n11_R.txt\n12_R.txt"
 - 11_R.txt → 保存"内容2"  
 - 12_R.txt → 保存"内容3"
 ```
+### PDTool系列（主要解决的是一些算法上问题，以及功能复刻）
+#### 抠图专用：
+![UnMultBlackBackground](img/image/UnMultBlackBackground.png)
+PDTool:UnMultBlackBackground：（抠图黑色背景）
+把 black_threshold 慢慢调高（比如调到 0.05、0.08），直到周围的噪点完全消失，背景变得干干净净！
 
-##### PD 字符串转json (语言自动检测)
-> 将输入的字符串转换为包含caption和lang字段的JSON格式字符串，支持批量处理。
+如果你把它设为 0.0：
+就等于关闭了这个过滤器，效果就会回到你之前那张满屏幕红绿花屏的状态。
 
-- text：输入文本内容（必需，支持列表批处理）
-- lang：语言代码（可选，默认"en"，可选：en/zh/ja/ko/auto等）
+0.020 这个数值的意思是：告诉程序，凡是亮度低于 2% (0.02) 的像素，统统不要去算什么发光提亮了，直接把它们当成“纯正的黑色”处理掉！
 
-**功能特点：**
-- ✅ 支持批量文本列表输入输出
-- ✅ 自动语言检测（中文/英文/日文/韩文）
-- ✅ 输出标准JSON格式：`{"caption": "...", "lang": "en"}`
-- ✅ 保持输入输出顺序完全一致
-- ✅ UTF-8编码，完美支持中文
+低于 0.020 的像素：被当做无用的 JPG 压缩噪点，直接变成纯透明的完美背景。
 
-**使用示例：**
-```
-输入: "This is a photography work..."
-输出: {"caption": "This is a photography work...", "lang": "en"}
-```
-
-##### PD_CaptionJSON编辑器
-> 解析并编辑JSON格式的caption字符串，支持替换词语、添加前后缀等批量操作。
-
-- json_string：输入JSON字符串（必需，支持列表批处理）
-- new_caption：完全替换caption内容（可选）
-- add_prefix：在caption前添加文本（可选）
-- add_suffix：在caption后添加文本（可选）
-- replace_from：要替换的词语（每行一个，可选）
-- replace_to：替换为的词语（每行一个，可选）
-- new_lang：修改语言代码（可选，默认"en"）
-
-**功能特点：**
-- ✅ 支持批量JSON编辑
-- ✅ 多种编辑操作：完全替换、词语替换、前后缀添加
-- ✅ 输出完整JSON字符串、caption文本、语言代码
-- ✅ 保持输入输出顺序一致
-
-**使用场景：**
-- 批量修改训练数据标注
-- 添加通用前缀后缀词（如quality tags）
-- 批量替换或删除特定词语
-- 修改语言标签
-
-##### PD_CaptionJSON解析器
-> 解析JSON格式的caption字符串，快速提取caption和lang字段，支持批量处理。
-
-- json_string：输入JSON字符串（必需，支持列表批处理）
-
-**输出：**
-- caption：提取的caption文本列表
-- lang：语言代码列表
-
-**功能特点：**
-- ✅ 快速批量解析JSON
-- ✅ 自动提取caption和lang字段
-- ✅ 解析失败时智能降级处理
-- ✅ 保持输入输出顺序一致
+高于 0.020 的像素：被当做真正有用的法杖发光边缘，正常进行完美的色彩还原和提亮。
 
 ##### PD text_list_string_add word
 > 批量为字符串添加词语，支持前缀、后缀、替换、插入等多种操作，适用于文本批处理。
@@ -333,7 +290,7 @@ filename_text = "10_R.txt\n11_R.txt\n12_R.txt"
 - mask_optional：可选的mask输入
 
 ##### PD:imagesize_v2
-![alt text](image.png)
+![alt text](img/image/image.png)
 > 图片缩放裁切节点V2，支持三种处理模式：纯缩放、比例裁切、强制拉伸。
 
 - pixels：输入图片张量
@@ -346,7 +303,7 @@ filename_text = "10_R.txt\n11_R.txt\n12_R.txt"
 - mask_optional：可选的mask输入
 
 ##### PD:ratio selector
-![alt text](image-3.png)
+![alt text](img/image/image-3.png)
 > 很简单的逻辑，主要是处理输出尺寸，比例 方便后续出图控制比例的流程。
 RETURN_TYPES = ("STRING", "INT", "INT")
 any thing输入 都可以怼进去，适合调整尺寸。
@@ -542,19 +499,7 @@ any thing输入 都可以怼进去，适合调整尺寸。
 - 工作流参数配置管理
 
 ---
-### 抠图专用：
-![UnMultBlackBackground](img/image/UnMultBlackBackground.png)
-PDTool:UnMultBlackBackground：（抠图黑色背景）
-把 black_threshold 慢慢调高（比如调到 0.05、0.08），直到周围的噪点完全消失，背景变得干干净净！
 
-如果你把它设为 0.0：
-就等于关闭了这个过滤器，效果就会回到你之前那张满屏幕红绿花屏的状态。
-
-0.020 这个数值的意思是：告诉程序，凡是亮度低于 2% (0.02) 的像素，统统不要去算什么发光提亮了，直接把它们当成“纯正的黑色”处理掉！
-
-低于 0.020 的像素：被当做无用的 JPG 压缩噪点，直接变成纯透明的完美背景。
-
-高于 0.020 的像素：被当做真正有用的法杖发光边缘，正常进行完美的色彩还原和提亮。
 
 ### 动画/视频处理
 
