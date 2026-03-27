@@ -5,8 +5,8 @@ from PIL import Image
 
 class PDImageResizeV2:
     """
-    图片缩放裁切节点V2 (完美复刻 LayerStyle 版本)
-    所有参数和内部逻辑均与 ComfyUI_LayerStyle 的 ImageScale 完全对齐。
+    图片缩放裁切节点V2 
+    (外部接口保持原有命名，底层逻辑与参数选项 1:1 完美复刻 LayerUtility: ImageScaleByAspectRatio V2)
     """
     RETURN_TYPES = ("IMAGE", "MASK",)
     FUNCTION = "image_scale"
@@ -18,13 +18,16 @@ class PDImageResizeV2:
             "required": {
                 "pixels": ("IMAGE",),
                 "aspect_ratio": (["original", "custom", "1:1", "3:2", "4:3", "16:9", "21:9", "2:3", "3:4", "9:16", "9:21"], {"default": "original"}),
-                "proportional_width": ("INT", {"default": 1, "min": 1, "max": 999, "step": 1}),
-                "proportional_height": ("INT", {"default": 1, "min": 1, "max": 999, "step": 1}),
+                # 上限放宽至 9999 对齐 LayerUtility V2
+                "proportional_width": ("INT", {"default": 1, "min": 1, "max": 9999, "step": 1}),
+                "proportional_height": ("INT", {"default": 1, "min": 1, "max": 9999, "step": 1}),
                 "fit": (["letterbox", "crop", "fill"], {"default": "crop"}),
                 "method": (["lanczos", "bicubic", "hamming", "bilinear", "box", "nearest"], {"default": "lanczos"}),
-                "scale_to_side": (["longest", "shortest", "width", "height", "total_pixel"], {"default": "longest"}),
+                # 选项对齐 LayerUtility V2 (新增 total_pixel(kilo pixel))
+                "scale_to_side": (["longest", "shortest", "width", "height", "total_pixel(kilo pixel)"], {"default": "longest"}),
                 "scale_to_length": ("INT", {"default": 1024, "min": 16, "max": 16777216, "step": 1}),
-                "round_to_multiple": (["None", "4", "8", "16", "32", "64", "128"], {"default": "8"}),
+                # 选项对齐 LayerUtility V2 (新增 256, 512, 保留原有的 4)
+                "round_to_multiple": (["None", "4", "8", "16", "32", "64", "128", "256", "512"], {"default": "8"}),
                 "background_color": ("STRING", {"default": "#000000"}),
             },
             "optional": {
@@ -73,32 +76,32 @@ class PDImageResizeV2:
                 w_str, h_str = aspect_ratio.split(":")
                 target_ratio = float(w_str) / float(h_str)
 
-            # 2. 计算基准尺寸 (Base Dimensions)
-            target_w, target_h = orig_w, orig_h
+            # 2. 计算基准尺寸 (Base Dimensions) - 完全对齐 LayerUtility V2
             if scale_to_side == "longest":
-                if target_ratio >= 1: # 宽图
+                if target_ratio > 1:
                     target_w = scale_to_length
-                    target_h = scale_to_length / target_ratio
-                else:                 # 长图
+                    target_h = target_w / target_ratio
+                else:
                     target_h = scale_to_length
-                    target_w = scale_to_length * target_ratio
+                    target_w = target_h * target_ratio
             elif scale_to_side == "shortest":
-                if target_ratio >= 1:
+                if target_ratio > 1:
                     target_h = scale_to_length
-                    target_w = scale_to_length * target_ratio
+                    target_w = target_h * target_ratio
                 else:
                     target_w = scale_to_length
-                    target_h = scale_to_length / target_ratio
+                    target_h = target_w / target_ratio
             elif scale_to_side == "width":
                 target_w = scale_to_length
-                target_h = scale_to_length / target_ratio
+                target_h = target_w / target_ratio
             elif scale_to_side == "height":
                 target_h = scale_to_length
-                target_w = scale_to_length * target_ratio
-            elif scale_to_side == "total_pixel":
-                # W * H = scale_to_length, 且 W / H = target_ratio
-                target_w = math.sqrt(scale_to_length * target_ratio)
-                target_h = scale_to_length / target_w
+                target_w = target_h * target_ratio
+            elif scale_to_side == "total_pixel(kilo pixel)":
+                # Kilo Pixel (千像素) 逻辑，总面积 = scale_to_length * 1000
+                target_area = scale_to_length * 1000
+                target_h = math.sqrt(target_area / target_ratio)
+                target_w = target_h * target_ratio
 
             # 3. 对齐/取整 (Round to Multiple)
             if round_to_multiple != "None":
@@ -213,7 +216,7 @@ class PDImageResizeV2:
             mask = mask.convert('L')
         return torch.from_numpy(np.array(mask).astype(np.float32) / 255.0)
 
-# 节点注册
+# 节点注册 (保持你的原命名)
 NODE_CLASS_MAPPINGS = {
     "PDImageResizeV2": PDImageResizeV2,
 }

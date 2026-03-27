@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageColor
 
 def pil2tensor(image):
     """将PIL图像转换为张量 (1, H, W, C)"""
@@ -10,20 +10,21 @@ def tensor2pil(image):
     """将张量转换为PIL图像"""
     return Image.fromarray(np.clip(255. * image.cpu().numpy().squeeze(), 0, 255).astype(np.uint8))
 
-class ImageBlendAndWhite:
+class ImageAddBackground:
     """
-    * 透明底图片加白色背景节点
-    * 输入透明底图片，输出白底图片，尺寸完全一致
+    * 透明底图片加自定义背景色节点
+    * 输入透明底图片和颜色值，输出带背景的图片，尺寸完全一致
     """
     
     def __init__(self):
-        self.NODE_NAME = 'ImageBlendAndWhite'
+        self.NODE_NAME = 'ImageAddBackground'
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "image": ("IMAGE",),  # 输入图片
+                "color": ("STRING", {"default": "#FFFFFF"}), # 背景颜色，支持HEX十六进制或英文颜色名(如'red', 'black')
                 "invert_mask": ("BOOLEAN", {"default": True}),  # 是否反转遮罩，默认True
             },
             "optional": {
@@ -33,19 +34,26 @@ class ImageBlendAndWhite:
 
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
-    FUNCTION = 'add_white_background'
+    FUNCTION = 'add_background'
     CATEGORY = 'PDuse/Image'
 
-    def add_white_background(self, image, invert_mask=True, mask=None):
+    def add_background(self, image, color="#FFFFFF", invert_mask=True, mask=None):
         """
-        * 给透明底图片添加白色背景
+        * 给透明底图片添加自定义背景
         * 保持原图尺寸不变
         * mask默认会被反转
         """
         ret_images = []
         
-        print(f"ℹ️ 开始处理 {image.shape[0]} 张图像，遮罩反转: {invert_mask}")
+        print(f"ℹ️ 开始处理 {image.shape[0]} 张图像，背景色: {color}，遮罩反转: {invert_mask}")
         
+        # 尝试解析颜色，如果失败则回退到白色
+        try:
+            parsed_color = ImageColor.getrgb(color)
+        except ValueError:
+            print(f"⚠️ 颜色值 '{color}' 无效，将使用默认白色背景。")
+            parsed_color = (255, 255, 255)
+            
         # 处理每张图像
         for i in range(image.shape[0]):
             # 获取当前图像
@@ -57,8 +65,8 @@ class ImageBlendAndWhite:
             # 获取图像尺寸
             width, height = pil_image.size
             
-            # 创建相同尺寸的白色背景
-            white_bg = Image.new('RGB', (width, height), 'white')
+            # 创建相同尺寸的自定义颜色背景
+            bg_image = Image.new('RGB', (width, height), parsed_color)
             
             # 处理透明度/遮罩
             if mask is not None and i < mask.shape[0]:
@@ -88,8 +96,8 @@ class ImageBlendAndWhite:
             else:
                 rgb_image = pil_image.convert('RGB')
             
-            # 将图像粘贴到白色背景上
-            result = white_bg.copy()
+            # 将图像粘贴到背景上
+            result = bg_image.copy()
             result.paste(rgb_image, (0, 0), mask_pil)
             
             # 转换回张量
@@ -100,9 +108,9 @@ class ImageBlendAndWhite:
 
 # ComfyUI节点注册
 NODE_CLASS_MAPPINGS = {
-    "ImageBlendAndWhite": ImageBlendAndWhite
+    "ImageAddBackground": ImageAddBackground
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "ImageBlendAndWhite": "PD:Add White Background"
+    "ImageAddBackground": "PDtools:Add Background"
 }

@@ -8,7 +8,8 @@ import os
 import sys
 
 # 设置Web目录，用于加载前端资源
-WEB_DIRECTORY = "js"
+WEB_DIRECTORY = "web"
+
 
 # 初始化节点映射
 NODE_CLASS_MAPPINGS = {}
