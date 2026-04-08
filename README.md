@@ -65,7 +65,7 @@ pip install -r requirements.txt
 - longer_size ： 单张图的最长边尺寸限制
 
 #### PD_Text Overlay Node
-![PD_Text Overlay Node](img/PD_Text%20Overlay%20Node.png)
+![PD_Text Overlay Node](img/PD_Text Overlay Node.png)
 > 给图片添加文字，并且指定位置贴上去。
 
 - image：要处理的输入图片
@@ -89,7 +89,7 @@ pip install -r requirements.txt
 - 添加方向: up/down/left/right 四个方向
 
 ##### PD加载文本文件夹(输出列表)
-![PD 读文件夹txt](img/bach/PD%20读文件夹txt.png)
+![PD 读文件夹txt](img/bach/PD 读文件夹txt.png)
 > 批量读取文件夹内的文本文件（.txt, .json等），输出内容列表。
 
 - directory_path：文件夹路径
@@ -223,7 +223,7 @@ PDTool:UnMultBlackBackground：（抠图黑色背景）
 - create_subdirs：是否创建子目录
 
 ##### PDIMAGE_SAVE_PATHV2
-![PDIMAGE_SAVE_PATHV2](img/PDIMAGE_SAVE_PATHV2.png)
+![PDIMAGE_SAVE_PATHV2](img/PDIMAGE_SAVE_PATH.png)
 > 增强版图片保存路径管理节点，支持多种图片格式、时间令牌和智能文件命名。
 
 - filename_prefix：文件名前缀（支持时间令牌）
@@ -236,7 +236,7 @@ PDTool:UnMultBlackBackground：（抠图黑色背景）
 - overwrite_mode：覆盖模式选择
 
 ##### PD:Image Blend V1
-![PDImage_Blend V1](img/PDImage_Blend%20V1%20.png)
+![PDImage_Blend V1](img/PD_Image Blend V1.png)
 > 将两张图片进行混合，支持多种混合模式、透明度控制和位置调整。
 - background_image：背景图像（必填）
 - layer_image：图层图像（必填）
@@ -249,7 +249,7 @@ PDTool:UnMultBlackBackground：（抠图黑色背景）
 - invert_mask：是否反转遮罩
 
 ##### PD:Image Ratio Crop
-![Image Ratio Crop](img/Image%20Ratio%20Crop.png)
+![Image Ratio Crop](img/Image Ratio Crop.png)
 > 根据指定比例和最长边长度进行中心裁切，支持自定义比例和输出尺寸。
 
 - image：输入图像张量
@@ -309,7 +309,7 @@ any thing输入 都可以怼进去，适合调整尺寸。
 - output_path：输出路径（可选，不填则覆盖原图）
 
 ##### PD_BatchCropBlackBorder
-![PD_BatchCropBlackBorder](img/PDimage_cropborderbach.png)
+![PD_BatchCropBlackBorder](img/image/PD_CropBorder.jpg)
 > 批量图像边框裁切节点，批量处理文件夹中的所有图片，自动检测并移除边框。
 
 - input_path：输入图片文件夹路径（必填）
@@ -369,7 +369,7 @@ any thing输入 都可以怼进去，适合调整尺寸。
 
 
 ##### PDJSON_Group
-![PDJSON_Group节点界面](img/PDJSON_Group.png)
+![PDJSON_Group](img/PD_节点汇总.png)
 > JSON文件输出路径和格式设置节点。
 
 - directory_path：JSON文件输出目录路径
