@@ -128,10 +128,6 @@ class ImageRatioCrop:
         return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
 # ComfyUI节点注册映射
-NODE_CLASS_MAPPINGS = {
-    "ImageRatioCrop": ImageRatioCrop
-}
+NODE_CLASS_MAPPINGS = {}
 
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "ImageRatioCrop": "PD:Image Ratio Crop"
-}
+NODE_DISPLAY_NAME_MAPPINGS = {}

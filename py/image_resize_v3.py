@@ -26,9 +26,7 @@ class PDImageResizeV3:
         return {
             "required": {
                 "pixels": ("IMAGE",),
-                "resize_mode": (["longest", "shortest"], {"default": "longest"}),
-                "target_size": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
-                "crop_mode": (["none", "crop", "stretch"], {"default": "none"}),
+                "crop_mode": (["crop", "stretch"], {"default": "crop"}),
                 "target_width": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
                 "target_height": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
                 "horizontal_align": (["left", "center", "right"], {"default": "center"}),
@@ -40,37 +38,22 @@ class PDImageResizeV3:
         }
 
     @classmethod
-    def VALIDATE_INPUTS(cls, resize_mode, target_size, target_width, target_height, **_):
-        """
-        校验输入参数。
-        @param resize_mode {str} 缩放模式：longest 或 shortest
-        @param target_size {int} 目标尺寸
-        @param target_width {int} 目标宽度
-        @param target_height {int} 目标高度
-        @returns {True|str} 校验通过返回 True，否则返回错误信息
-        """
-        if target_size <= 0:
-            return "目标尺寸必须大于0"
+    def VALIDATE_INPUTS(cls, target_width=None, target_height=None, **_):
+        if target_width is None:
+            target_width = 1024
+        if target_height is None:
+            target_height = 1024
         if target_width <= 0 or target_height <= 0:
-            return "目标宽度和高度必须大于0"
+            return "target_width and target_height must be greater than 0"
         return True
 
-    def resize_and_crop(self, pixels, resize_mode, target_size, crop_mode, target_width, target_height, 
-                       horizontal_align, vertical_align, mask_optional=None):
-        """
-        按照指定模式缩放和裁切图片。
-        @param pixels {Tensor} 输入图片，形状为 (B, H, W, C)
-        @param resize_mode {str} 缩放模式：longest 或 shortest
-        @param target_size {int} 目标尺寸
-        @param crop_mode {str} 裁切模式：none/crop/stretch
-        @param target_width {int} 目标宽度
-        @param target_height {int} 目标高度
-        @param horizontal_align {str} 水平对齐方式
-        @param vertical_align {str} 垂直对齐方式
-        @param mask_optional {Tensor|None} 可选 mask，形状为 (B, H, W)
-        @returns {tuple} (处理后的图片, 处理后的 mask)
-        """
-        validity = self.VALIDATE_INPUTS(resize_mode, target_size, target_width, target_height)
+    def resize_and_crop(self, pixels, crop_mode, target_width, target_height, horizontal_align, vertical_align, mask_optional=None):
+        if target_width is None:
+            target_width = 1024
+        if target_height is None:
+            target_height = 1024
+
+        validity = self.VALIDATE_INPUTS(target_width, target_height)
         if validity is not True:
             raise Exception(validity)
 
@@ -81,45 +64,30 @@ class PDImageResizeV3:
         for i in range(batch_size):
             img_tensor = pixels[i]
             mask_tensor = mask_optional[i] if mask_optional is not None else None
-            
-            # 转换为PIL图像进行处理
+
             pil_image = self._tensor_to_pil(img_tensor)
             pil_mask = self._tensor_to_pil_mask(mask_tensor) if mask_tensor is not None else None
-            
-            # 根据裁切模式处理图像
+
             if crop_mode == "crop":
-                # 尺寸裁切模式：先按目标尺寸比例裁切后缩放
                 pil_image, pil_mask = self._crop_by_size_and_align(
                     pil_image, pil_mask, target_width, target_height, horizontal_align, vertical_align
                 )
-                pil_image, pil_mask = self._resize_image_and_mask(
-                    pil_image, pil_mask, resize_mode, target_size
-                )
-            elif crop_mode == "stretch":
-                # 强制拉伸模式：直接拉伸到目标尺寸
-                pil_image, pil_mask = self._stretch_to_size(
-                    pil_image, pil_mask, target_width, target_height
-                )
-            else:  # crop_mode == "none"
-                # 无裁切模式：只按原比例缩放
-                pil_image, pil_mask = self._resize_image_and_mask(
-                    pil_image, pil_mask, resize_mode, target_size
-                )
-            
-            # 转换回张量
+            pil_image, pil_mask = self._stretch_to_size(
+                pil_image, pil_mask, target_width, target_height
+            )
+
             result_images.append(self._pil_to_tensor(pil_image))
             if pil_mask is not None:
                 result_masks.append(self._pil_mask_to_tensor(pil_mask))
             else:
-                # 如果没有mask，创建一个全零的mask
                 h, w = pil_image.size[1], pil_image.size[0]
                 result_masks.append(torch.zeros(h, w, dtype=torch.float32))
 
-        # 合并批次
         final_images = torch.stack(result_images, dim=0)
         final_masks = torch.stack(result_masks, dim=0)
 
         return (final_images, final_masks)
+
 
     def _crop_by_size_and_align(self, image, mask, target_width, target_height, h_align, v_align):
         """
@@ -274,5 +242,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PDImageResizeV3": "PD:image_resize_V3",
+    "PDImageResizeV3": "PD:image_resize_custom",
 }

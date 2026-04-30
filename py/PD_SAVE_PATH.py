@@ -37,8 +37,8 @@ class PD_imagesave_path:
         """
         return {"required": 
                     {"images": ("IMAGE", ),  # 输入图像数组
-                     "filename_prefix": ("STRING", {"default": "R"}),  # 文件名前缀
-                     "custom_output_dir": ("STRING", {"default": "", "optional": True}),  # 自定义输出目录(可选)
+                     "filename_prefix": ("STRING", {"default": "R"}),  # filename prefix
+                     "save_path": ("STRING", {"default": "", "multiline": False}),  # output folder or full file path
                      "format": (["png", "jpg"], {"default": "png"}),  # 图像格式选择
                      "numberfront": ("BOOLEAN", {"default": True}),  # 数字位置：True=前面，False=后面
                      "separator": ("STRING", {"default": "_"}),  # 分割符，默认为下划线
@@ -58,32 +58,21 @@ class PD_imagesave_path:
     OUTPUT_NODE = True  # 标识为输出节点
     CATEGORY = "PD/Image"  # 节点分类
 
-    def save_images(self, images, filename_prefix="R", prompt=None, extra_pnginfo=None, 
-                   custom_output_dir="", format="png", numberfront=True, separator="_", show_preview=True, refresh_each_run=False):
+    def save_images(self, images, save_path="", filename_prefix="R", prompt=None, extra_pnginfo=None,
+                   format="png", numberfront=True, separator="_", show_preview=True, refresh_each_run=False):
         """
         保存图像主方法
         """
         try:
             # 判断是否有自定义保存路径
-            if not custom_output_dir:
-                # 没有自定义路径时，使用默认路径，并创建以文件名和日期为标识的子文件夹
-                date_str = datetime.now().strftime("%Y-%m-%d")  # 生成当前日期字符串
-                custom_output_dir = os.path.join(self.output_dir, f"{filename_prefix}_{date_str}")
-            
-            # -------------------------------------------------------------------------
-            # [关键修改] 
-            # 无论路径是自动生成的，还是用户自定义填写的，都强制尝试创建文件夹
-            # exist_ok=True 表示如果文件夹已存在，不会报错，继续执行
-            # -------------------------------------------------------------------------
+            output_dir, filename_prefix, format = self._resolve_save_target(save_path, filename_prefix, format)
+            filename_prefix = self._safe_filename(filename_prefix)
             try:
-                os.makedirs(custom_output_dir, exist_ok=True)
+                os.makedirs(output_dir, exist_ok=True)
             except Exception as e:
-                print(f"创建目录失败: {custom_output_dir}, 错误: {e}")
-                # 如果创建目录失败，可能因为权限问题，但这通常会让后续保存步骤报错
-            
-            # 调用私有方法保存图像到自定义目录，获取保存结果
-            results = self._save_images_to_dir(images, filename_prefix, prompt, extra_pnginfo, 
-                                   custom_output_dir, format, numberfront, separator)
+                print(f"Failed to create output folder: {output_dir}, error: {e}")
+            results = self._save_images_to_dir(images, filename_prefix, prompt, extra_pnginfo,
+                                   output_dir, format, numberfront, separator)
 
             saved_count = len(results)
             success = saved_count > 0
@@ -101,6 +90,29 @@ class PD_imagesave_path:
             if show_preview:
                 return {"ui": {}, "result": (False, 0)}
             return (False, 0)
+
+    def _resolve_save_target(self, save_path, filename_prefix, format):
+        save_path = (save_path or "").strip().strip('"')
+        format = (format or "png").lower().lstrip(".")
+        if not save_path:
+            date_str = datetime.now().strftime("%Y-%m-%d")
+            return os.path.join(self.output_dir, f"{filename_prefix}_{date_str}"), filename_prefix, format
+
+        save_path = os.path.expanduser(os.path.expandvars(save_path))
+        known_exts = {".png", ".jpg", ".jpeg"}
+        root, ext = os.path.splitext(save_path)
+        if ext.lower() in known_exts:
+            output_dir = os.path.dirname(save_path) or self.output_dir
+            filename_prefix = os.path.basename(root) or filename_prefix
+            return output_dir, filename_prefix, ext.lower().lstrip(".")
+
+        return save_path, filename_prefix, format
+
+    def _safe_filename(self, filename_prefix):
+        filename_prefix = str(filename_prefix or "R").replace(":", "x")
+        filename_prefix = re.sub(r'[<>"/\\|?*\x00-\x1f]', "_", filename_prefix)
+        return filename_prefix.strip(" .") or "R"
+
 
     def _save_images_to_dir(self, images, filename_prefix, prompt, extra_pnginfo, 
                            output_dir, format, numberfront, separator):
@@ -218,5 +230,5 @@ NODE_CLASS_MAPPINGS = {
 
 # 节点显示名称映射：定义在UI中显示的节点名称
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PD_imagesave_path": "PD_save path",
+    "PD_imagesave_path": "PD_save image path",
 }

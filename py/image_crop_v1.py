@@ -80,5 +80,5 @@ NODE_CLASS_MAPPINGS = {
     "PDimage_corp_v1": PDimage_corp_v1,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PDimage_corp_v1": "PD:Image Crop V1",
+    "PDimage_corp_v1": "PD:Image Crop_ratio",
 } 
