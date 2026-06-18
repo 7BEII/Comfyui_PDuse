@@ -24,7 +24,7 @@ class PDImageResizeV2:
                 "fit": (["letterbox", "crop", "fill"], {"default": "crop"}),
                 "method": (["lanczos", "bicubic", "hamming", "bilinear", "box", "nearest"], {"default": "lanczos"}),
                 # 选项对齐 LayerUtility V2 (新增 total_pixel(kilo pixel))
-                "scale_to_side": (["longest", "shortest", "width", "height", "total_pixel(kilo pixel)"], {"default": "longest"}),
+                "scale_to_side": (["longest", "shortest", "width", "height"], {"default": "longest"}),
                 "scale_to_length": ("INT", {"default": 1024, "min": 16, "max": 16777216, "step": 1}),
                 # 选项对齐 LayerUtility V2 (新增 256, 512, 保留原有的 4)
                 "round_to_multiple": (["None", "4", "8", "16", "32", "64", "128", "256", "512"], {"default": "8"}),
@@ -42,6 +42,9 @@ class PDImageResizeV2:
         batch_size = pixels.shape[0]
         result_images = []
         result_masks = []
+
+        if mask_optional is not None and torch.all(mask_optional >= 0.999).item():
+            return (pixels, mask_optional)
         
         # 采样算法映射
         method_map = {

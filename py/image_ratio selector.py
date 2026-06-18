@@ -21,8 +21,8 @@ class PDRatioSelector:
             }
         }
 
-    RETURN_TYPES = ("STRING", "INT", "INT", "STRING")
-    RETURN_NAMES = ("ratio", "width", "height", "filename_prefix")
+    RETURN_TYPES = ("STRING", "INT", "INT", "STRING", "STRING")
+    RETURN_NAMES = ("ratio", "width", "height", "filename_prefix", "max_size")
     FUNCTION = "calculate_dimensions"
     CATEGORY = "PDuse/Image"
 
@@ -46,7 +46,7 @@ class PDRatioSelector:
 
         safe_ratio = aspect_ratio.replace(":", "x")
         filename_prefix = f"image={safe_ratio}-{width}x{height}"
-        return (aspect_ratio, width, height, filename_prefix)
+        return (aspect_ratio, width, height, filename_prefix, str(max_size))
 
 # 节点注册
 NODE_CLASS_MAPPINGS = {
