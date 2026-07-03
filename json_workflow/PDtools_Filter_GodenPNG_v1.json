@@ -1,0 +1,504 @@
+{
+  "id": "dbe9ed39-51fc-4dbb-8574-6670295d8dbc",
+  "revision": 0,
+  "last_node_id": 22,
+  "last_link_id": 23,
+  "nodes": [
+    {
+      "id": 11,
+      "type": "MaskPreview",
+      "pos": [
+        1396.7343173493678,
+        452.8040424435006
+      ],
+      "size": [
+        210,
+        285.4680298144045
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 10
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MaskPreview"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9,
+      "type": "PDtools_Filter_GodenPNG_v1",
+      "pos": [
+        854.9753645277369,
+        602.6441868424296
+      ],
+      "size": [
+        289.3921875,
+        102
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            9
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDtools_Filter_GodenPNG_v1"
+      },
+      "widgets_values": [
+        10
+      ]
+    },
+    {
+      "id": 10,
+      "type": "SaveImage",
+      "pos": [
+        1164.6827151575849,
+        454.6975910780154
+      ],
+      "size": [
+        210,
+        282
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "LoadImage",
+      "pos": [
+        541.5313514548542,
+        425.2341890742303
+      ],
+      "size": [
+        270,
+        314.00000000000006
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            8
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "Clipboard - 2026-07-03 15.37.19.png",
+        "image"
+      ]
+    },
+    {
+      "id": 14,
+      "type": "SaveImage",
+      "pos": [
+        1194.1827008993557,
+        849.775679213354
+      ],
+      "size": [
+        210,
+        282
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 15
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "MaskPreview",
+      "pos": [
+        1050.327422383599,
+        909.6484518983502
+      ],
+      "size": [
+        210,
+        285.4680298144045
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 7,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 16
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MaskPreview"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 17,
+      "type": "JoinImageWithAlpha",
+      "pos": [
+        1014.6450017276743,
+        1102.746936585189
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 17
+        },
+        {
+          "name": "alpha",
+          "type": "MASK",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "JoinImageWithAlpha"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 19,
+      "type": "InvertMask",
+      "pos": [
+        858.829761803176,
+        1113.4273813665468
+      ],
+      "size": [
+        140,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "InvertMask"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 16,
+      "type": "PDtools_Filter_WPNG_v1",
+      "pos": [
+        886.2004897950096,
+        966.9945888411044
+      ],
+      "size": [
+        273.73749084709175,
+        84.88751855918849
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            15,
+            17
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            16,
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PDtools_Filter_WPNG_v1"
+      },
+      "widgets_values": [
+        0.6
+      ]
+    },
+    {
+      "id": 13,
+      "type": "LoadImage",
+      "pos": [
+        542.4338975881593,
+        837.2332169491492
+      ],
+      "size": [
+        270,
+        314.0000000000001
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            14
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "Clipboard - 2026-07-03 15.04.43.png",
+        "image"
+      ]
+    },
+    {
+      "id": 18,
+      "type": "SaveImage",
+      "pos": [
+        1421.4648039775727,
+        851.2924091842418
+      ],
+      "size": [
+        270,
+        282
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 19
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    }
+  ],
+  "links": [
+    [
+      8,
+      8,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      9,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      10,
+      9,
+      1,
+      11,
+      0,
+      "MASK"
+    ],
+    [
+      14,
+      13,
+      0,
+      16,
+      0,
+      "IMAGE"
+    ],
+    [
+      15,
+      16,
+      0,
+      14,
+      0,
+      "IMAGE"
+    ],
+    [
+      16,
+      16,
+      1,
+      15,
+      0,
+      "MASK"
+    ],
+    [
+      17,
+      16,
+      0,
+      17,
+      0,
+      "IMAGE"
+    ],
+    [
+      19,
+      17,
+      0,
+      18,
+      0,
+      "IMAGE"
+    ],
+    [
+      20,
+      16,
+      1,
+      19,
+      0,
+      "MASK"
+    ],
+    [
+      21,
+      19,
+      0,
+      17,
+      1,
+      "MASK"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "Group",
+      "bounding": [
+        532.4338975881593,
+        767.2332169491492,
+        1174.3290918442915,
+        407.11472384801766
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "Group",
+      "bounding": [
+        531.5313514548542,
+        355.2341890742303,
+        1085.2029658945137,
+        394.00000000000006
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.2284597357367306,
+      "offset": [
+        -113.87862628564905,
+        -174.92243172941141
+      ]
+    },
+    "frontendVersion": "1.45.15"
+  },
+  "version": 0.4
+}

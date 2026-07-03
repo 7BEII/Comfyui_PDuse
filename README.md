@@ -136,18 +136,28 @@ filename_text = "10_R.txt\n11_R.txt\n12_R.txt"
 ```
 ### PDTool系列（主要解决的是一些算法上问题，以及功能复刻）
 #### 抠图专用：
-![UnMultBlackBackground](img/image/UnMultBlackBackground.png)
-PDTool:UnMultBlackBackground：（抠图黑色背景）
-把 black_threshold 慢慢调高（比如调到 0.05、0.08），直到周围的噪点完全消失，背景变得干干净净！
+#### PDtools Filter 抠图节点
 
-如果你把它设为 0.0：
-就等于关闭了这个过滤器，效果就会回到你之前那张满屏幕红绿花屏的状态。
+##### PDtools_Filter_WPNG_v1
+用于黑白图、黑底白字、黑白 logo 的阈值二值化处理，思路接近 Photoshop 的“阈值”。
 
-0.020 这个数值的意思是：告诉程序，凡是亮度低于 2% (0.02) 的像素，统统不要去算什么发光提亮了，直接把它们当成“纯正的黑色”处理掉！
+- 输入：`image`
+- 参数：`threshold`，范围 `0.0 - 1.0`
+- 输出：黑白二值 `image` 和同款 `mask`
+- 规则：像素亮度 `>= threshold` 变白，进入 mask；像素亮度 `< threshold` 变黑，不进入 mask。
+- 调低 threshold：保留更多灰色笔触和细节，也可能带入噪点。
+- 调高 threshold：结果更干净，只保留更亮的白色区域，但灰色笔触可能丢失。
 
-低于 0.020 的像素：被当做无用的 JPG 压缩噪点，直接变成纯透明的完美背景。
+##### PDtools_Filter_WPNG_v2
+- 用于黑底发光、虚化边缘、带光晕的素材。它按亮度生成软 alpha，并尽量恢复被黑底预乘过的发光颜色。
+- black_threshold：黑场过滤阈值。数值越低，保留更多暗部发光；数值越高，黑底去得更狠，但弱光边缘可能丢失。
+- 适合白色发光字、彩色发光字、黑底光效素材。
 
-高于 0.020 的像素：被当做真正有用的法杖发光边缘，正常进行完美的色彩还原和提亮。
+##### PDtools_Filter_GodenPNG_v1
+用于灰底、棋盘格、马赛克底上的金色文字、红色印章类素材。
+- 阈值：越大就是可行度高，抠的越多内容。
+- remove_white=true：那种灰底马赛克图，会把白色块删干净，内部的白色也会跟着删除。
+- remove_white=false：会更保留金色文字里的白色高光，内部白色保留，可能会抠不干净。
 
 ##### PD text_list_string_add word
 > 批量为字符串添加词语，支持前缀、后缀、替换、插入等多种操作，适用于文本批处理。
@@ -300,111 +310,82 @@ any thing输入 都可以怼进去，适合调整尺寸。
 
 #### PD:ratio selector
 
-> 根据比例和 `max_size` 计算输出尺寸，方便后续统一控制画布比例和保存文件名。
+![PD:ratio selector](img/image/image-3.png)
 
-**输入：**
-- `aspect_ratio`：比例选择，如 `1:1 / 2:3 / 3:2 / 9:16 / 16:9`
-- `max_size`：最长边尺寸
+按比例和 `max_size` 计算画布尺寸。
 
-**输出：**
-- `ratio`：比例字符串
-- `width`：计算后的宽度
-- `height`：计算后的高度
-- `filename_prefix`：文件名前缀，例如 `image=2x3-680x1024`
-- `max_size`：字符串形式的最长边尺寸
+- 输入：`aspect_ratio`、`max_size`
+- 输出：`ratio / width / height / filename_prefix / max_size`
+- `filename_prefix` 示例：`image=2x3-680x1024`
+- 本次新增：`max_size` 也作为 string 输出
 
 #### PDimage_resize_V2
 
-> 图片按比例缩放/裁切节点。本次重点修正透明 PNG 缩放后的白边问题。
+![PDimage_resize_V2](img/image/image.png)
 
-**主要调整：**
+图片按比例缩放、裁切或补边。
+
 - `scale_to_side` 只保留：`longest / shortest / width / height`
-- 图片仍按 `method` 选择的方式缩放，例如 `lanczos / bicubic / nearest`
-- `mask_optional` 不再直接跟随图片插值方式缩放
-- 带 `mask_optional` 时使用 alpha-aware 缩放，减少透明区域隐藏 RGB 污染边缘导致的白边
-- mask 输出前会二值化，并清掉最外圈 1px，减少边缘残留
-
-**透明 PNG 使用建议：**
-- `Load Image` 的 `IMAGE` 接到 `pixels`
-- `Load Image` 的 `MASK` 接到 `mask_optional`
-- 透明图缩放时建议 image 和 mask 一起进节点，否则透明区域隐藏的 RGB 颜色可能在缩放后污染边缘
+- 正常有内容的图片和 mask 保持原来的处理逻辑
+- 透明 PNG 必须把 `Load Image.MASK` 接到 `mask_optional`
+- 如果 `mask_optional` 全 1，说明整张图完全透明，节点会直接原样输出，避免后续合成出现白边/黑边
 
 #### PDselector-string
 
-> 根据比例选择三组字符串/整数值，常用于给“缩放至长度”等整数输入动态传值。
+> 原节点名：`PD:string-selector`
 
-**输入：**
-- `aspect_ratio`：比例字符串，支持 `2:3 / 1:1 / 3:2`
-- `2:3`：默认 `768`
-- `1:1`：默认 `680`
-- `3:2`：默认 `1024`
+按比例选择字符串/整数值。
 
-**输出：**
-- `string`：字符串输出
-- `int`：整数输出，可直接接整数输入口
+- 输入：`aspect_ratio`、`2:3`、`1:1`、`3:2`
+- 默认值：`2:3=768`、`1:1=680`、`3:2=1024`
+- 输出：`string / int`
 
 #### PDselector-image
 
-> 根据比例选择对应图片，并输出选中图片的尺寸信息。
+> 原节点名：`PD:ratio-image-selector`
 
-**输入：**
-- `2:3`：必填图片
-- `1:1`：可选图片
-- `3:2`：可选图片
-- `aspect_ratio`：比例字符串，支持 `2:3 / 1:1 / 3:2`
+按比例选择图片。
 
-**输出：**
-- `image`：选中的图片
-- `ratio`：当前使用的比例字符串
-- `width`：选中图片宽度
-- `height`：选中图片高度
-
-**规则：**
-- `2:3` 选择第一张图片
-- `1:1` 选择第二张图片
-- `3:2` 选择第三张图片
-- 如果选了 `1:1` 或 `3:2` 但对应图片未接入，会回退输出 `2:3` 图片
+- 输入：`2:3` 必填，`1:1 / 3:2` 可选，`aspect_ratio` 控制选择
+- 输出：`image / ratio / width / height`
+- 未接入对应比例图片时，回退输出 `2:3`
 
 #### PD-selector-sum-T3
 
-> 按比例在三组素材中选择一组，统一输出前景、mask、背景、整数参数和尺寸信息。
+按比例选择一整组素材。
 
-**比例映射：**
-- `2:3` -> 第 1 组
-- `1:1` -> 第 2 组
-- `3:2` -> 第 3 组
-
-**输入：**
-- 第 1 组必填，也是默认兜底：`front1 / mask1 / back1 / int1`
-- 第 2 组可选：`front2 / mask2 / back2 / int2`
-- 第 3 组可选：`front3 / mask3 / back3 / int3`
-- `aspect_ratio`：比例字符串，支持 `2:3 / 1:1 / 3:2`
-
-**输出：**
-- `front`：选中的前景图
-- `mask`：选中组对应的 mask
-- `back`：选中的背景图
-- `int`：选中组对应的整数值
-- `ratio`：当前使用的比例字符串
-- `width`：选中 `back` 图的实际宽度
-- `height`：选中 `back` 图的实际高度
-
-**规则：**
-- 如果选了 `1:1` 或 `3:2`，但对应组没有接完整，会自动回退输出第 1 组
+- 映射：`2:3` 第 1 组，`1:1` 第 2 组，`3:2` 第 3 组
+- 第 1 组必填：`front1 / mask1 / back1`
+- 第 2、3 组可选：`front2 / mask2 / back2`、`front3 / mask3 / back3`
+- 参数：`int1 / int2 / int3 / X1 / Y1 / X2 / Y2 / X3 / Y3`
+- 输出：`front / mask / back / int / ratio / width / height / X / Y`
+- 选中组未接完整时，回退第 1 组
+- 参数区顺序：
+```text
+aspect_ratio -> int1 -> int2 -> int3 -> X1 -> Y1 -> X2 -> Y2 -> X3 -> Y3
+```
 
 #### PD:string-to-ratio-combo
 
-> 把普通字符串比例转成比例 combo 输出，用于连接需要比例 combo 类型的输入口。
+把普通比例字符串转成 combo 输出。
 
-**输入：**
-- `string`：比例字符串
-- `fallback`：输入不合法时使用的默认比例
+- 输入：`string / fallback`
+- 输出：`combo`
+- 支持：`1:1 / 3:4 / 4:3 / 2:3 / 3:2 / 9:16 / 16:9`
 
-**输出：**
-- `combo`：比例 combo 输出
+#### 透明图合成提示
 
-**支持比例：**
-- `1:1 / 3:4 / 4:3 / 2:3 / 3:2 / 9:16 / 16:9`
+![PD:Image Blend V1](img/PD_Image Blend V1.png)
+
+透明 PNG 进 `PDimage_resize_V2` 时，image 和 mask 要一起接：
+
+```text
+Load Image.IMAGE -> PDimage_resize_V2.pixels
+Load Image.MASK  -> PDimage_resize_V2.mask_optional
+
+PDimage_resize_V2.图像 -> PD:Image Blend V1.layer_image
+PDimage_resize_V2.遮罩 -> PD:Image Blend V1.layer_mask
+```
 
 
 ##### PD_CropBorder
@@ -616,9 +597,6 @@ any thing输入 都可以怼进去，适合调整尺寸。
 ---
 
 
-### 动画/视频处理
-
-(已移除)
 
 ---
 ## 🎯 应用工作流：workflow
