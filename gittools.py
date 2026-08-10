@@ -191,6 +191,75 @@ class GitSyncTool:
             print(f"✅ 提交成功")
             return True
         return False
+
+    def get_commit_hash(self, ref):
+        """读取指定引用的提交哈希"""
+        result = self.run_command(f"git rev-parse {ref}", check=False, silent=True)
+        if result and result.returncode == 0:
+            return result.stdout.strip()
+        return None
+
+    def print_command_output(self, result):
+        """打印命令输出，便于定位网络断开等异常"""
+        if not result:
+            return
+
+        stdout = result.stdout.strip()
+        stderr = result.stderr.strip()
+        if stdout:
+            print(stdout)
+        if stderr:
+            print(f"错误信息: {stderr}")
+
+    def verify_remote_matches_local(self, branch):
+        """刷新远端引用，并确认远端分支已经等于本地 HEAD"""
+        local_hash = self.get_commit_hash("HEAD")
+        if not local_hash:
+            print("❌ 无法读取本地 HEAD，不能确认推送结果")
+            return False
+
+        fetch_result = self.run_command(f"git fetch origin {branch}", check=False, silent=True)
+        if not fetch_result or fetch_result.returncode != 0:
+            print("❌ 无法刷新远端状态，不能确认推送是否成功")
+            self.print_command_output(fetch_result)
+            return False
+
+        remote_ref = f"origin/{branch}"
+        remote_hash = self.get_commit_hash(remote_ref)
+        if not remote_hash:
+            print(f"❌ 无法读取远端 {remote_ref}，不能确认推送结果")
+            return False
+
+        if local_hash == remote_hash:
+            print(f"✅ 已确认远端和本地一致: {local_hash[:7]}")
+            return True
+
+        print("❌ 推送未完成：远端和本地不一致")
+        print(f"   本地 HEAD: {local_hash}")
+        print(f"   远端 {remote_ref}: {remote_hash}")
+        return False
+
+    def push_force_with_verification(self, branch, attempts=2):
+        """强制推送后做远端校验；命令断开时也以校验结果为准"""
+        for attempt in range(1, attempts + 1):
+            if attempt > 1:
+                print(f"\n🔁 第 {attempt} 次重试推送...")
+
+            result = self.run_command(f"git push --force-with-lease origin {branch}", check=False)
+
+            if result and result.returncode == 0:
+                self.print_command_output(result)
+                if self.verify_remote_matches_local(branch):
+                    return True
+                continue
+
+            print("\n❌ 推送命令没有成功返回，正在核对远端实际状态...")
+            self.print_command_output(result)
+            if self.verify_remote_matches_local(branch):
+                print("ℹ️  推送命令断开了，但远端已经更新完成。")
+                return True
+
+        return False
     
     def force_push(self):
         """纯粹的本地覆盖远程（不拉取，直接强制推送）"""
@@ -224,14 +293,12 @@ class GitSyncTool:
             print("❌ 提交失败，推送中止")
             return
         
-        # 强制推送（不拉取远程）
+        # 强制推送（不拉取远程），并以远端哈希校验作为最终结果
         print(f"\n⬆️  正在强制推送到远程 ({branch})...")
-        result = self.run_command(f"git push -f origin {branch}")
-        
-        if result:
+        if self.push_force_with_verification(branch):
             print(f"\n✅ 推送成功!")
         else:
-            print("\n❌ 推送失败")
+            print("\n❌ 推送失败：远端未确认和本地一致")
     
     def force_pull(self):
         """纯粹的远程覆盖本地（不保留本地未推送的修改）"""
