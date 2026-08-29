@@ -2,6 +2,7 @@ from collections import deque
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 
 class PDRemoveWhiteBackground:
@@ -12,6 +13,8 @@ class PDRemoveWhiteBackground:
                 "image": ("IMAGE",),
                 "white_threshold": ("FLOAT", {"default": 0.95, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "edge_black_threshold": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 0.5, "step": 0.01, "tooltip": "Treat edge-connected pixels at or below this brightness as background. Set to 0 to disable."}),
+                "invert_mask": ("BOOLEAN", {"default": False, "tooltip": "Invert the final foreground/background selection."}),
+                "binary_mask": ("BOOLEAN", {"default": False, "tooltip": "Convert the final mask to pure black and white. This disables soft anti-aliased edges."}),
             }
         }
 
@@ -20,7 +23,7 @@ class PDRemoveWhiteBackground:
     FUNCTION = "remove"
     CATEGORY = "PDuse/Image"
 
-    def remove(self, image, white_threshold, edge_black_threshold):
+    def remove(self, image, white_threshold, edge_black_threshold, invert_mask=False, binary_mask=False):
         pixels = image[..., :3].detach().to(device="cpu", dtype=torch.float32).numpy()
         masks = []
         for item in pixels:
@@ -59,6 +62,12 @@ class PDRemoveWhiteBackground:
             masks.append(find_outer(white) | find_outer(dark))
 
         mask = torch.from_numpy(np.stack(masks)).to(device=image.device, dtype=image.dtype)
+        kernel = mask.new_tensor(((1, 2, 1), (2, 4, 2), (1, 2, 1))).reshape(1, 1, 3, 3) / 16
+        mask = F.conv2d(F.pad(mask.unsqueeze(1), (1, 1, 1, 1), mode="replicate"), kernel).squeeze(1)
+        if invert_mask:
+            mask = 1.0 - mask
+        if binary_mask:
+            mask = (mask >= 0.5).to(mask.dtype)
         return (image, mask)
 
 
