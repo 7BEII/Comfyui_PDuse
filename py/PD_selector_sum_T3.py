@@ -57,8 +57,12 @@ class PDSelectorSumT3:
         ratio = aspect_ratio.strip()
         groups = {
             "2:3": (front1, mask1, back1, int1, X1, Y1),
+            "3:4": (front1, mask1, back1, int1, X1, Y1),
+            "9:16": (front1, mask1, back1, int1, X1, Y1),
             "1:1": (front2, mask2, back2, int2, X2, Y2),
             "3:2": (front3, mask3, back3, int3, X3, Y3),
+            "4:3": (front3, mask3, back3, int3, X3, Y3),
+            "16:9": (front3, mask3, back3, int3, X3, Y3),
         }
         if ratio not in groups:
             ratio = "2:3"
